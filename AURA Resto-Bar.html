@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AURA Resto-Bar</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e5e7eb;--ac:#0f766e;--acs:#ccfbf1;--bad:#b91c1c;--ok:#15803d;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#181e26;--tx:#e8ecf1;--mut:#97a1ae;--bd:#2a323d;--ac:#2dd4bf;--acs:#12332f;--bad:#f87171;--ok:#4ade80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1318;--card:#181e26;--tx:#e8ecf1;--mut:#97a1ae;--bd:#2a323d;--ac:#2dd4bf;--acs:#12332f;--bad:#f87171;--ok:#4ade80;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+aside{background:var(--card);border-right:1px solid var(--bd);padding:16px 10px;position:sticky;top:0;height:100vh}
+.logo{font-weight:700;letter-spacing:.06em;color:var(--ac);padding:0 8px 14px}
+nav button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--tx);padding:9px 10px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.on{background:var(--acs);color:var(--ac);font-weight:600}
+main{padding:18px;max-width:1000px;width:100%;overflow-x:hidden}
+.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+h2{margin:0 0 12px;font-size:20px}h3{margin:16px 0 8px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
+.k{color:var(--mut);font-size:12px}.v{font-size:21px;font-weight:700}
+input,select,button.b{font:inherit;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);max-width:100%}
+button.b{background:var(--ac);color:var(--ac-text,#fff);border-color:var(--ac);cursor:pointer}
+button.g{background:none;color:var(--tx);border-color:var(--bd)}
+button.d{background:none;color:var(--bad);border-color:var(--bad)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mut);font-size:12px;font-weight:600}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.pg button{text-align:left;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.pg button:disabled{opacity:.45}
+.msg{padding:8px 12px;border-radius:8px;margin-bottom:10px;background:var(--acs);color:var(--ac)}.msg.e{background:none;border:1px solid var(--bad);color:var(--bad)}
+.neg{color:var(--bad)}.pos{color:var(--ok)}.mut{color:var(--mut)}
+@media(max-width:760px){.app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--bd);padding:8px}
+.logo{display:none}nav{display:flex;overflow-x:auto;gap:4px}nav button{width:auto;white-space:nowrap}main{padding:12px}}
+main>*{animation:fi .25s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.card{transition:transform .15s,box-shadow .15s}.hov{cursor:pointer}.hov:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.14)}
+button{transition:transform .1s,opacity .15s}button:active:not(:disabled){transform:scale(.96)}nav button:hover:not(.on){background:var(--bg)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:5px 13px;font:inherit;cursor:pointer}.chip.on{background:var(--ac);color:var(--ac-text,#fff);border-color:var(--ac)}
+.chipx{background:var(--acs);color:var(--ac);padding:3px 10px;border-radius:999px;font-size:12px}.bw{background:var(--bd);border-radius:4px}.bar{height:8px;border-radius:4px;background:var(--ac);transition:width .4s}
+.pg button:hover:not(:disabled){border-color:var(--ac);transform:translateY(-2px)}
+#ts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#ts.on{opacity:1}
+.prev,#pr .tk{font:12px/1.35 "Courier New",monospace;color:#000}.prev{max-width:310px;background:#fff;border:1px dashed #888;padding:10px;margin:8px 0}
+.tk .r{text-align:right}.tk .c{text-align:center}.tk hr{border:0;border-top:1px dashed #000}.pb{break-after:page;height:1px}
+#pr{display:none;background:#fff;color:#000}.rp{font:11px Arial,sans-serif}.rp table{border-collapse:collapse;width:100%;margin-bottom:8px}.rp th,.rp td{border:1px solid #999;padding:3px 5px;color:#000}.rp h2{font-size:14px;margin:10px 0 4px}
+td input{width:100%;min-width:70px}
+@media print{body>*:not(#pr){display:none!important}#pr{display:block}}
+html{font-size:17px}body{line-height:1.55;font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.app{grid-template-columns:240px 1fr}main{padding:26px;max-width:1100px}
+button.b,.chip,select,input{min-height:46px;font-size:1rem}button.b{padding:10px 18px;border-radius:12px;font-weight:600}.big{min-height:54px;font-size:1.1rem;padding:12px 26px}
+nav button{font-size:1.05rem;padding:13px 14px;min-height:48px;border-radius:12px;margin-bottom:4px}.logo{font-size:1.15rem;padding-bottom:18px}
+.card{border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}h2{font-size:1.7rem;margin:0 0 16px}h3{font-size:1.2rem;margin:24px 0 10px}
+.v{font-size:1.7rem}.k{font-size:.92rem}th{font-size:.85rem}th,td{padding:12px 10px}.row{gap:10px;margin:10px 0}
+.pg{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}.pg button{padding:14px;font-size:1rem;border-radius:14px;min-height:98px}
+.chip{font-size:1rem;padding:10px 18px}.msg{font-size:1rem;padding:12px 16px;border-radius:12px}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}.mo{background:var(--card);color:var(--tx);border-radius:18px;padding:24px;max-width:460px;width:100%}
+.lg{max-width:430px;margin:7vh auto;padding:26px}label{font-weight:600}
+@media(max-width:760px){.app{grid-template-columns:1fr}main{padding:14px}.pg{grid-template-columns:repeat(2,1fr)}nav button{font-size:1rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.logo{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;border-radius:14px;padding:14px;margin-bottom:16px;text-align:center}nav button.on{box-shadow:inset 4px 0 0 var(--ac)}nav button{display:flex;align-items:center;gap:8px}
+.pl{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}.cartp{position:sticky;top:12px}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.mi{position:relative;display:flex;flex-direction:column;gap:4px;text-align:left;padding:0 0 12px;border:2px solid var(--bd);border-radius:18px;background:var(--card);color:var(--tx);font:inherit;cursor:pointer;overflow:hidden;transition:transform .15s,box-shadow .15s,border-color .15s}
+.mi>b,.mi>.pr,.mi>.k{padding:0 12px}.mi b{font-size:1.05rem;line-height:1.25}.mi .pr{color:var(--ac);font-weight:700;font-size:1.1rem}
+.mi:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.16);border-color:var(--ac)}.mi.sel{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}.mi:disabled{opacity:.55;cursor:not-allowed}
+.mi.ro{cursor:default}.mi.ro:hover{transform:none;box-shadow:none;border-color:var(--bd)}
+.th{width:46px;height:46px;border-radius:10px;object-fit:cover;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex:none}
+.th.big{width:100%;height:auto;aspect-ratio:4/3;border-radius:0;font-size:2.6rem}.th.sm{width:40px;height:40px}
+.bd{position:absolute;top:8px;right:8px;background:var(--ac);color:#fff;border-radius:999px;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;z-index:2}
+.ag{position:absolute;top:8px;left:8px;background:#b91c1c;color:#fff;border-radius:8px;padding:2px 8px;font-size:.82rem;z-index:2}
+.ph{cursor:pointer;display:inline-block}label.up{display:inline-flex;align-items:center;cursor:pointer}
+@media(max-width:900px){.pl{grid-template-columns:1fr}.cartp{position:static}}
+.logo{background:var(--lg,linear-gradient(135deg,#0f766e,#115e59))}.lgi{max-height:54px;max-width:100%;display:block;margin:0 auto 8px;object-fit:contain}
+.lgw{min-height:78vh;display:flex;align-items:center;justify-content:center;border-radius:20px;padding:16px;background:var(--card)}.lgw .lg{margin:0;width:100%}
+.mesa{border-width:2px}.mesa.r{border-color:#dc2626;background:color-mix(in srgb,#dc2626 14%,var(--card))}.mesa.v{border-color:#16a34a;background:color-mix(in srgb,#16a34a 14%,var(--card))}.mesa.r .v{color:#dc2626}.mesa.v .v{color:#16a34a}
+.chip.r{border-color:#dc2626;color:#dc2626}.chip.v{border-color:#16a34a;color:#16a34a}.chip.on.r{background:#dc2626;color:#fff}.chip.on.v{background:#16a34a;color:#fff}
+.dot{display:inline-block;width:13px;height:13px;border-radius:50%;background:var(--bd);margin:0 6px 0 16px;vertical-align:-1px}.dot.r{background:#dc2626}.dot.v{background:#16a34a}
+.fld{display:flex;flex-direction:column;gap:4px;font-weight:600;min-width:150px}.fld input{width:100%}.fld input[type=color]{padding:2px}
+.cc{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+@media(max-width:760px){aside{position:fixed!important;bottom:0;left:0;right:0;top:auto;z-index:10;border-top:1px solid var(--bd);border-bottom:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}main{padding-bottom:96px}.logo{display:none}nav button{flex-direction:column;gap:2px;font-size:.8rem;min-width:78px;padding:8px 6px;text-align:center}}
+
+
+/* ============================================================
+   AURA · CAPA DE AJUSTES VISUALES
+   Solo presentación: no altera HTML funcional, datos ni JavaScript.
+   ============================================================ */
+:root{
+  --bg:#f5f7f8;
+  --card:#ffffff;
+  --tx:#26343b;
+  --mut:#687780;
+  --bd:#e2e8ea;
+  --ac:#286d68;
+  --acs:#e6f1ef;
+  --bad:#b85c55;
+  --ok:#398064;
+  --aura-shadow:0 8px 24px rgba(31,52,59,.055);
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#151c20;--card:#1e282d;--tx:#e8eeee;--mut:#a5b2b6;
+    --bd:#344248;--ac:#78b8ad;--acs:#263d3b;--bad:#e28a82;--ok:#78bd9a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151c20;--card:#1e282d;--tx:#e8eeee;--mut:#a5b2b6;
+  --bd:#344248;--ac:#78b8ad;--acs:#263d3b;--bad:#e28a82;--ok:#78bd9a;
+}
+html{min-width:320px;scroll-behavior:smooth}
+body{min-width:320px;overflow-x:hidden;background:var(--bg);color:var(--tx)}
+.app{grid-template-columns:240px minmax(0,1fr);width:100%;min-height:100vh}
+aside{z-index:5;min-width:0;overflow-y:auto;overscroll-behavior:contain;background:var(--card)}
+.logo{line-height:1.3;box-shadow:0 4px 12px rgba(24,75,70,.12);overflow-wrap:anywhere}
+nav{min-width:0}
+nav button{min-width:0;line-height:1.25;transition:background-color .18s ease,color .18s ease}
+nav button.on{box-shadow:inset 3px 0 0 var(--ac)}
+main{width:min(100%,1280px);min-width:0;max-width:1280px;justify-self:center;padding:clamp(18px,2.4vw,34px);overflow-x:hidden}
+#m{width:100%;min-width:0}
+#m>*{min-width:0}
+.top{width:100%;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.top select{min-width:min(260px,100%);flex:0 1 auto}
+h2{line-height:1.2;letter-spacing:-.025em;color:var(--tx)}
+h3{line-height:1.3;color:var(--tx)}
+.grid,.mg,.cc,.pg{min-width:0;align-items:stretch}
+.grid{gap:14px}
+.card{min-width:0;box-shadow:var(--aura-shadow);border-color:var(--bd);background:var(--card)}
+.card.hov{transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.card.hov:hover{box-shadow:0 10px 26px rgba(31,52,59,.10);border-color:color-mix(in srgb,var(--ac) 35%,var(--bd))}
+.v{line-height:1.2;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.k{line-height:1.45}
+.row{min-width:0;align-items:center;row-gap:9px}
+.row>*{min-width:0}
+input,select,textarea,button{max-width:100%;font-family:inherit}
+input,select,textarea{accent-color:var(--ac)}
+input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),select,textarea{border-color:var(--bd)}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);outline:3px solid color-mix(in srgb,var(--ac) 18%,transparent);outline-offset:1px}
+button.b{box-shadow:0 1px 2px rgba(25,50,55,.06);white-space:normal;line-height:1.25}
+button.b:not(:disabled):hover{filter:brightness(.96)}
+button.b:disabled{opacity:.48;cursor:not-allowed;box-shadow:none}
+button.g{background:var(--card);color:var(--tx);border-color:var(--bd)}
+button.d{background:transparent;color:var(--bad);border-color:color-mix(in srgb,var(--bad) 55%,var(--bd))}
+.chips{gap:8px;align-items:center}
+.chip{line-height:1.25;white-space:normal}
+.chip:not(.on):hover{border-color:color-mix(in srgb,var(--ac) 55%,var(--bd));background:var(--acs)}
+.msg{border:1px solid color-mix(in srgb,var(--ac) 22%,var(--bd));line-height:1.4}
+.msg.e{background:color-mix(in srgb,var(--bad) 8%,var(--card));border-color:color-mix(in srgb,var(--bad) 35%,var(--bd))}
+.neg{color:var(--bad)}.pos{color:var(--ok)}
+.tw{width:100%;max-width:100%;border:1px solid var(--bd);border-radius:12px;background:var(--card);overscroll-behavior-x:contain;scrollbar-width:thin}
+.tw table{width:100%;min-width:640px;border-collapse:separate;border-spacing:0}
+.tw th{position:sticky;top:0;background:var(--card);z-index:1}
+.tw th,.tw td{vertical-align:middle}
+.tw tr:last-child td{border-bottom:0}
+.tw tbody tr:hover td{background:color-mix(in srgb,var(--ac) 4%,var(--card))}
+td input{min-width:76px}
+.pg{grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:14px}
+.pg button{min-width:0;overflow-wrap:anywhere;line-height:1.45;background:var(--card);border-color:var(--bd)}
+.mg{grid-template-columns:repeat(auto-fill,minmax(min(100%,175px),1fr));gap:14px}
+.mi{min-width:0;box-shadow:0 2px 8px rgba(31,52,59,.035)}
+.mi .th.big{background-color:color-mix(in srgb,var(--ac) 12%,var(--card));object-fit:cover}
+.mi b,.mi .k{overflow-wrap:anywhere}
+.pl{grid-template-columns:minmax(0,1fr) minmax(300px,360px);gap:20px;align-items:start}
+.pl>div{min-width:0}
+.cartp{top:18px;max-height:calc(100vh - 36px);overflow-y:auto;overscroll-behavior:contain}
+.cartp .row>span[style*="flex:1"]{overflow-wrap:anywhere}
+.mesa{min-width:0}
+.mesa .row{flex-wrap:wrap}
+.mesa .v{overflow-wrap:anywhere}
+.fld{min-width:0;width:100%;max-width:100%}
+.cc{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.lgw{width:100%;max-width:900px;min-height:min(78vh,760px);margin:0 auto;box-shadow:var(--aura-shadow)}
+.lg{width:min(100%,430px);margin:0 auto;box-shadow:var(--aura-shadow)}
+.lgi{max-width:min(100%,260px);max-height:72px}
+.ov{overflow-y:auto;backdrop-filter:blur(3px)}
+.mo{max-height:calc(100dvh - 32px);overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.prev{width:min(100%,310px);max-width:100%;overflow-wrap:anywhere;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+#ts{max-width:calc(100vw - 32px);text-align:center;z-index:30}
+:focus-visible{outline-color:var(--ac)}
+
+@media(min-width:1200px){
+  .app{grid-template-columns:250px minmax(0,1fr)}
+  aside{padding:20px 14px}
+  main{padding:32px 38px}
+}
+@media(max-width:1000px){
+  .app{grid-template-columns:210px minmax(0,1fr)}
+  main{padding:22px}
+  .pl{grid-template-columns:minmax(0,1fr) minmax(280px,330px);gap:14px}
+}
+@media(max-width:760px){
+  .app{display:block;min-height:100vh}
+  aside{position:fixed!important;inset:auto 0 0 0;height:auto;max-height:92px;overflow:hidden;z-index:15;
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+    border:0;border-top:1px solid var(--bd);box-shadow:0 -6px 20px rgba(25,45,50,.08)}
+  nav{display:flex;align-items:stretch;gap:5px;width:100%;overflow-x:auto;overflow-y:hidden;padding:0 0 2px;scrollbar-width:thin;overscroll-behavior-x:contain}
+  nav button{display:flex;flex:0 0 auto;flex-direction:column;justify-content:center;align-items:center;gap:3px;
+    min-width:76px;max-width:112px;min-height:58px;margin:0;padding:7px 9px;border-radius:10px;
+    font-size:.78rem;line-height:1.15;text-align:center;white-space:normal}
+  nav button.on{box-shadow:inset 0 3px 0 var(--ac)}
+  main{width:100%;max-width:none;padding:18px 16px calc(116px + env(safe-area-inset-bottom,0px));}
+  .top{gap:8px;margin-bottom:16px;padding-bottom:10px}
+  .top select{flex:1 1 190px;min-width:0}
+  .top button{flex:0 0 auto}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px}
+  .pl{grid-template-columns:minmax(0,1fr);gap:14px}
+  .cartp{position:static;max-height:none;overflow:visible}
+  .mg{grid-template-columns:repeat(auto-fill,minmax(min(100%,145px),1fr));gap:10px}
+  .mi{border-radius:14px}
+  .mi .th.big{aspect-ratio:5/4}
+  .row{gap:8px}
+  .row input,.row select{flex:1 1 145px}
+  .row button{flex:0 0 auto}
+  .cc{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+  .lgw{min-height:calc(100dvh - 140px);padding:12px}
+  .ov{align-items:flex-start;padding:12px}
+  .mo{margin:auto 0;padding:20px}
+}
+@media(max-width:440px){
+  html{font-size:16px}
+  main{padding-left:12px;padding-right:12px}
+  h2{font-size:1.45rem}
+  h3{font-size:1.08rem}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .card{padding:13px;border-radius:13px}
+  .v{font-size:1.45rem}
+  .pg{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .pg button{padding:11px;min-height:90px}
+  .mg{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .mi>b,.mi>.pr,.mi>.k{padding-left:10px;padding-right:10px}
+  .chip{padding:9px 12px}
+  .row>*{max-width:100%}
+  .row input,.row select{flex:1 1 100%;width:100%;min-width:0}
+  .row button{flex:1 1 auto}
+  .top .chipx{margin-left:0!important}
+  .top button{min-height:42px}
+  .cartp .row input,.cartp .row select{flex:1 1 100%}
+  .mesa .row button{flex:0 0 auto}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+@media print{
+  aside,.top{display:none!important}
+  main{display:none!important}
+  #pr{display:block!important}
+}
+
+
+/* ============================================================
+   AURA · AJUSTES RESPONSIVOS FINALES
+   Navegación adaptable a escritorio, tablet y móvil.
+   No modifica la lógica ni los datos de la aplicación.
+   ============================================================ */
+html, body { width:100%; max-width:100%; }
+.app { grid-template-columns:250px minmax(0,1fr); }
+aside { min-width:0; }
+nav button { overflow-wrap:anywhere; }
+main, #m, #m > * { min-width:0; }
+.row > input, .row > select, .row > textarea { flex: 0 1 auto; }
+
+/* Tablet: navegación superior, para evitar una columna lateral estrecha. */
+@media (min-width:601px) and (max-width:900px) {
+  .app { display:grid; grid-template-columns:minmax(0,1fr); }
+  aside { position:relative; top:auto; height:auto; max-height:none; padding:12px 16px; border-right:0; border-bottom:1px solid var(--bd); overflow:visible; }
+  .logo { display:block; margin:0 0 10px; padding:10px 14px; }
+  nav { display:flex; flex-wrap:wrap; align-items:stretch; gap:6px; width:100%; overflow:visible; }
+  nav button { flex:1 1 125px; width:auto; min-width:0; min-height:44px; margin:0; padding:10px 12px; text-align:center; justify-content:center; border:1px solid var(--bd); }
+  nav button.on { box-shadow:inset 0 -3px 0 var(--ac); }
+  main { width:100%; max-width:none; padding:22px clamp(16px,3vw,30px); }
+  .pl { grid-template-columns:minmax(0,1fr) minmax(260px,320px); }
+  .cartp { position:static; max-height:none; overflow:visible; }
+}
+
+/* Móvil: menú completo visible en una cuadrícula desplazable, sin tapar el contenido. */
+@media (max-width:600px) {
+  .app { display:flex; flex-direction:column; min-height:100vh; }
+  aside { order:0; position:sticky!important; inset:auto; top:0; bottom:auto; height:auto; max-height:none; overflow:visible; z-index:15;
+    padding:8px 10px 10px; border:0; border-bottom:1px solid var(--bd); box-shadow:0 4px 14px rgba(25,45,50,.07); }
+  .logo { display:block; margin:0 0 8px; padding:8px 10px; font-size:.98rem; border-radius:10px; }
+  .lgi { max-height:34px; margin-bottom:4px; }
+  nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; width:100%; max-height:190px; overflow-x:hidden; overflow-y:auto; padding:0 2px 3px; scrollbar-width:thin; overscroll-behavior:contain; }
+  nav button { display:flex; width:100%; min-width:0; max-width:none; min-height:42px; height:auto; flex:initial; flex-direction:row; justify-content:center; align-items:center; gap:5px;
+    margin:0; padding:8px 5px; border:1px solid var(--bd); border-radius:9px; font-size:.78rem; line-height:1.15; text-align:center; white-space:normal; overflow-wrap:anywhere; }
+  nav button.on { box-shadow:inset 0 -3px 0 var(--ac); }
+  main { order:1; width:100%; max-width:none; padding:14px 12px calc(24px + env(safe-area-inset-bottom,0px)); }
+  .top { align-items:stretch; }
+  .top select { flex:1 1 100%; width:100%; min-width:0; }
+  .top button, .top .chipx { flex:0 1 auto; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .pl { grid-template-columns:minmax(0,1fr); }
+  .cartp { position:static; max-height:none; overflow:visible; }
+  .row { align-items:stretch; }
+  .row > input, .row > select, .row > textarea { flex:1 1 100%; width:100%; min-width:0; }
+  .row > button { flex:1 1 auto; min-width:0; }
+  .mesa .row > button { flex:0 0 auto; }
+  .tw { -webkit-overflow-scrolling:touch; }
+  .tw table { min-width:620px; }
+  .ov { padding:10px; }
+  .mo { width:100%; max-width:100%; max-height:calc(100dvh - 20px); padding:16px; }
+  .lgw { min-height:0; padding:10px; }
+  .lg { padding:18px; }
+}
+
+@media (max-width:360px) {
+  nav { grid-template-columns:repeat(2,minmax(0,1fr)); max-height:180px; }
+  nav button { font-size:.8rem; }
+  .grid, .pg, .mg { grid-template-columns:minmax(0,1fr); }
+  .card { padding:12px; }
+}
+
+
+/* Menú hamburguesa desplegable en tablet y móvil */
+.menu-toggle{display:none}
+@media (max-width:900px){
+  .app{display:flex!important;flex-direction:column;min-height:100vh}
+  aside{order:0;position:relative!important;inset:auto!important;top:auto!important;bottom:auto!important;height:auto!important;max-height:none!important;overflow:visible!important;z-index:15;padding:10px 14px!important;border:0!important;border-bottom:1px solid var(--bd)!important;box-shadow:0 4px 14px rgba(25,45,50,.07)}
+  .logo{display:block!important;margin:0 0 8px!important;padding:8px 10px!important;font-size:1rem;text-align:left}
+  .logo .lgi{max-height:36px;margin:0 8px 0 0;display:inline-block;vertical-align:middle}
+  .menu-toggle{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:10px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);font:inherit;font-weight:650;text-align:left;cursor:pointer}
+  .hamb-icon{font-size:1.35rem;line-height:1;color:var(--ac)}
+  .menu-chevron{margin-left:auto;transition:transform .18s ease}
+  aside.menu-open .menu-chevron{transform:rotate(180deg)}
+  nav{display:none!important;flex-direction:column;align-items:stretch;gap:5px;width:100%;max-height:min(65vh,520px);overflow-y:auto;overflow-x:hidden;margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.10);overscroll-behavior:contain}
+  aside.menu-open nav{display:flex!important}
+  nav button{display:flex!important;align-items:center;justify-content:flex-start!important;flex:0 0 auto!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:46px!important;height:auto!important;margin:0!important;padding:11px 13px!important;border:1px solid transparent!important;border-radius:9px!important;text-align:left!important;white-space:normal!important;overflow-wrap:anywhere;font-size:.98rem!important;line-height:1.25;box-shadow:none!important}
+  nav button.on{background:var(--acs)!important;color:var(--ac)!important;border-color:var(--bd)!important;box-shadow:inset 3px 0 0 var(--ac)!important}
+  main{order:1;width:100%;max-width:none;padding:16px clamp(12px,3vw,24px) calc(24px + env(safe-area-inset-bottom,0px))!important}
+}
+@media(max-width:440px){aside{padding:8px 10px!important}.logo{font-size:.95rem!important}.menu-toggle{min-height:46px}nav{max-height:60vh;padding:6px}nav button{min-height:44px!important;font-size:.94rem!important}}
+
+#gasSyncNotice{position:fixed;bottom:8px;right:8px;z-index:99999;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-size:11px;opacity:.8;pointer-events:none}
+</style>
+<style>
+/* ============================================================
+   AURA · MENÚ POS VISUAL
+   Tarjetas táctiles, color por categoría y buscador fijo.
+   Solo presentación del punto de venta: no altera datos.
+   ============================================================ */
+:root{--font-ui:"Inter","Roboto","Open Sans","Segoe UI",system-ui,-apple-system,sans-serif}
+body{font-family:var(--font-ui)}
+
+/* --- Buscador predictivo siempre visible --- */
+.pos-search{position:sticky;top:0;z-index:7;display:flex;gap:8px;align-items:stretch;
+  padding:8px 0 12px;margin:-4px 0 2px;background:var(--bg)}
+.pos-search input{flex:1 1 auto;min-width:0;min-height:54px;font-size:1.05rem;font-weight:500;
+  border-radius:14px;padding:0 16px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+.pos-search input:focus{border-color:var(--ac);outline:3px solid color-mix(in srgb,var(--ac) 18%,transparent);outline-offset:1px}
+.pos-search .qclear{flex:0 0 auto;width:54px;height:auto;min-height:54px;border-radius:14px;border:1px solid var(--bd);
+  background:var(--card);color:var(--mut);font-size:1.15rem;font-weight:700;cursor:pointer;
+  align-items:center;justify-content:center;transition:color .15s,border-color .15s,background .15s}
+.pos-search .qclear:hover{color:var(--bad);border-color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,var(--card))}
+
+/* --- Chips de categoría con su color --- */
+.chips .chip[data-cc]{--cc:#8aa0a6;border-color:color-mix(in srgb,var(--cc) 38%,var(--bd));
+  color:color-mix(in srgb,var(--cc) 62%,var(--tx));background:color-mix(in srgb,var(--cc) 9%,var(--card))}
+.chips .chip{min-height:48px}
+.chips .chip[data-cc]:not(.on):hover{background:color-mix(in srgb,var(--cc) 18%,var(--card))}
+.chips .chip[data-cc].on{background:var(--cc);border-color:var(--cc);color:#fff;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--cc) 35%,transparent)}
+
+/* --- Cuadrícula de productos --- */
+.mg{grid-template-columns:repeat(auto-fill,minmax(min(100%,168px),1fr));gap:14px}
+.mi{--cc:#7f8f94;min-height:164px;gap:0;padding:0 0 14px;text-align:left;border-radius:16px;
+  border:1px solid color-mix(in srgb,var(--cc) 30%,var(--bd));border-left:6px solid var(--cc);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 16%,var(--card)) 0%,var(--card) 52%);
+  box-shadow:0 2px 8px rgba(31,52,59,.05);
+  transition:transform .14s ease,box-shadow .16s ease,border-color .16s ease,filter .16s ease}
+.mi .th.big{background:color-mix(in srgb,var(--cc) 22%,var(--card))!important;aspect-ratio:5/3}
+.mi .mi-cat{align-self:flex-start;margin:9px 12px 0;padding:2px 9px;border-radius:999px;
+  font-size:.72rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;line-height:1.5;
+  color:color-mix(in srgb,var(--cc) 70%,var(--tx));
+  background:color-mix(in srgb,var(--cc) 18%,var(--card));
+  border:1px solid color-mix(in srgb,var(--cc) 38%,var(--bd))}
+.mi .mi-name{font-size:1rem;font-weight:700;line-height:1.25;padding:7px 12px 0;color:var(--tx)}
+.mi .pr{font-size:1.3rem;font-weight:800;letter-spacing:-.01em;padding:3px 12px 0;
+  color:color-mix(in srgb,var(--cc) 55%,var(--tx))}
+.mi .k{font-size:.85rem;padding:3px 12px 0}
+
+/* --- Estados visuales (hover / active / seleccionado / agotado) --- */
+.mi:hover:not(:disabled):not(.ro){transform:translateY(-3px);border-color:var(--cc);
+  box-shadow:0 12px 26px color-mix(in srgb,var(--cc) 26%,transparent)}
+.mi:active:not(:disabled):not(.ro){transform:scale(.965);filter:brightness(.97);
+  box-shadow:inset 0 3px 10px rgba(0,0,0,.12)}
+.mi.sel{border-color:var(--cc);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--cc) 45%,transparent),0 8px 20px color-mix(in srgb,var(--cc) 22%,transparent)}
+.mi .bd{background:var(--cc);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.mi:disabled{opacity:1;cursor:not-allowed;filter:grayscale(.8);color:var(--mut);
+  background:color-mix(in srgb,#98a4a8 8%,var(--card));border-color:var(--bd);border-left-color:#98a4a8;box-shadow:none}
+.mi:disabled .pr{color:var(--mut);text-decoration:line-through}
+.mi:disabled .th.big{opacity:.5}
+.mi.ro{cursor:default;box-shadow:0 2px 8px rgba(31,52,59,.04)}
+.mi.ro:hover{border-color:color-mix(in srgb,var(--cc) 30%,var(--bd));border-left-color:var(--cc)}
+
+/* --- Inventario: nombres y categorías legibles --- */
+#itb table{min-width:940px}
+#itb td:nth-child(2) input{min-width:190px}
+#itb td:nth-child(3) input{min-width:130px}
+
+/* --- Mensaje de búsqueda sin resultados --- */
+.mg>.no-res{grid-column:1/-1;text-align:center;padding:28px 18px;border:1px dashed var(--bd);
+  border-radius:14px;color:var(--mut);background:var(--card);line-height:1.5}
+.mg>.no-res b{display:block;font-size:1.05rem;color:var(--tx);margin-bottom:3px}
+
+@media(max-width:600px){
+  .pos-search{padding:6px 0 10px}
+  .pos-search input{min-height:50px;font-size:1rem;padding:0 12px}
+  .pos-search .qclear{width:50px;min-height:50px;border-radius:12px}
+  .mg{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .mi{min-height:150px;border-left-width:5px;border-radius:14px}
+  .mi .pr{font-size:1.18rem}
+  .mi .mi-name{font-size:.95rem}
+  .mi .mi-cat{font-size:.68rem;padding:2px 8px}
+}
+@media(max-width:340px){.mg{grid-template-columns:minmax(0,1fr)}}
+</style></head><body>
+<div id="gasSyncNotice" aria-live="polite">Sincronización con Google Sheets</div><div class="app"><aside><div class="logo">AURA RESTO-BAR</div><button id="menuToggle" class="menu-toggle" type="button" aria-controls="nav" aria-expanded="false" onclick="toggleMenu()"><span class="hamb-icon" aria-hidden="true">☰</span><span>Menú</span><span class="menu-chevron" aria-hidden="true">▾</span></button><nav id="nav"></nav></aside><main id="m"></main></div>
+<script>
+if(typeof google==='undefined'||!google.script){document.getElementById('gasSyncNotice')?.remove()}
+const K='nexo_business_v1';
+const SERVER_STATE=null;
+const SERVER_REVISION=0;
+let S=null;
+try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(SERVER_STATE) S=SERVER_STATE;
+let _serverRevision=Number(SERVER_REVISION)||0, _saveTimer=null, _saveInFlight=false, _pendingSnapshot=null, _localSaveVersion=0, _sentVersion=0, _syncConflict=false, _syncError='';
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* Búsqueda tolerante: sin tildes, mayúsculas ni signos. "aguila" encuentra "Águila". */
+const nz=s=>String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+const fnd=(texto,consulta)=>{const t=nz(consulta).split(' ').filter(Boolean);if(!t.length)return true;const h=nz(texto);return t.every(x=>h.includes(x))};
+const fmt=n=>(n<0?'-':'')+'$'+Math.abs(Math.round(n)).toLocaleString('es-CO');
+const now=()=>new Date().toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'});
+function nb(prods){const b={products:[],customers:[],sales:[],moves:[],expenses:[],debts:[],sessions:[],open:null};
+ prods.forEach(([name,price,cost,min,qty])=>{const id=uid();b.products.push({id,name,price,cost,min});b.moves.push({id:uid(),pid:id,qty,type:'Inventario inicial',ref:'',at:now()})});return b}
+if(!S){const a=uid(),c=uid();S={a,biz:[{id:a,name:'Perfumería Centro',type:'Comercio'},{id:c,name:'Restaurante Sabor',type:'Gastronomía'}],d:{}};
+ S.d[a]=nb([['Perfume floral 50ml',20000,8000,5,30],['Colonia cítrica 100ml',35000,15000,5,4],['Crema corporal',12000,5000,5,20]]);
+ S.d[c]=nb([['Hamburguesa',18000,7000,5,25],['Limonada',6000,1500,5,40],['Papas fritas',8000,2500,5,3]])}
+const save=()=>{
+ try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
+ if(typeof google==='undefined'||!google.script||!google.script.run)return;
+ if(_syncConflict)return;
+ _localSaveVersion++;
+ _pendingSnapshot={json:JSON.stringify(S),version:_localSaveVersion};
+ clearTimeout(_saveTimer);
+ _saveTimer=setTimeout(_flushServerSave,900);
+};
+function _flushServerSave(){
+ if(_saveInFlight||!_pendingSnapshot||_syncConflict)return;
+ const job=_pendingSnapshot;_pendingSnapshot=null;_saveInFlight=true;_sentVersion=job.version;
+ google.script.run.withSuccessHandler(function(res){
+   _saveInFlight=false;
+   if(!res||!res.ok){
+     if(res&&res.conflict){_syncConflict=true;_syncError='Otro dispositivo guardó cambios después de que abriste esta sesión. Para proteger los datos, se pausó la sincronización. Recarga la página antes de seguir registrando ventas.';toast('⚠ '+_syncError);}
+     else { _pendingSnapshot=job; toast('⚠ No se pudo sincronizar con Google Sheets. Se conserva una copia local.'); }
+     return;
+   }
+   _serverRevision=Number(res.revision)||_serverRevision;
+   if(_pendingSnapshot&&_pendingSnapshot.version>job.version)_flushServerSave();
+ },function(err){
+   _saveInFlight=false;_pendingSnapshot=job;
+   toast('⚠ Error al guardar en servidor: '+(err&&err.message?err.message:'revisa tu conexión'));
+ }).saveAppState(job.json,_serverRevision);
+}
+const B=()=>S.d[S.a];let tab='dash',cart=[],busy=false,note=null;
+const stock=p=>B().moves.filter(m=>m.pid===p.id).reduce((s,m)=>s+m.qty,0);
+const V=id=>document.getElementById(id)?.value;
+const say=(t,e)=>{note={t,e}};
+const tabs=[['dash','Dashboard'],['pos','Punto de venta'],['sales','Ventas'],['inv','Inventario'],['exp','Gastos'],['cash','Caja'],['debt','Deudas']];
+
+function render(){
+ document.getElementById('nav').innerHTML=tabs.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="tab='${k}';cart=[];note=null;render()">${l}</button>`).join('');
+ const top=`<div class="top"><select onchange="S.a=this.value;cart=[];note=null;save();render()">${S.biz.map(x=>`<option value="${x.id}" ${x.id===S.a?'selected':''}>${esc(x.name)} · ${esc(x.type)}</option>`).join('')}</select>
+ <input id="nn" placeholder="Nuevo negocio" size="14"><select id="nt"><option>Comercio</option><option>Gastronomía</option><option>Servicios</option></select><button class="b g" onclick="addBiz()">+ Negocio</button></div>`;
+ const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';
+ document.getElementById('m').innerHTML=top+n+({dash,pos,sales,inv,exp,cash,debt}[tab])();note=null}
+function addBiz(){const n=V('nn').trim();if(!n)return;const id=uid();S.biz.push({id,name:n,type:V('nt')});S.d[id]=nb([]);S.a=id;save();say('Negocio creado, con datos aislados.');render()}
+
+function dash(){const b=B(),ok=b.sales.filter(s=>!s.void);
+ const sv=ok.reduce((s,x)=>s+x.total,0),cg=ok.reduce((s,x)=>s+x.items.reduce((a,i)=>a+i.cost*i.qty,0),0),ex=b.expenses.reduce((s,x)=>s+x.amt,0);
+ const un=b.products.reduce((s,p)=>s+stock(p),0),pc=b.debts.reduce((s,d)=>s+d.bal,0),low=b.products.filter(p=>stock(p)<=p.min);
+ const c=(k,v,x='')=>`<div class="card"><div class="k">${k}</div><div class="v ${x}">${v}</div></div>`;
+ return`<h2>Resumen del negocio</h2><div class="grid">${c('Ventas',fmt(sv))}${c('Gastos',fmt(ex))}${c('Utilidad estimada',fmt(sv-cg-ex),sv-cg-ex<0?'neg':'pos')}${c('Unidades en stock',un)}${c('Por cobrar',fmt(pc))}</div>
+ <h3>Alertas de inventario bajo</h3>${low.length?low.map(p=>`<div class="card" style="margin-bottom:6px">${esc(p.name)}: <b class="neg">${stock(p)}</b> uds (mínimo ${p.min})</div>`).join(''):'<p class="mut">Sin alertas.</p>'}
+ <h3>Actividad reciente</h3>${ok.slice(-5).reverse().map(s=>`<div class="row"><span>Venta #${s.n}</span><b class="pos">+${fmt(s.total)}</b><span class="mut">${s.at}</span></div>`).join('')||'<p class="mut">Aún no hay ventas.</p>'}`}
+
+function pos(){const b=B(),tot=cart.reduce((s,i)=>s+i.qty*i.price,0);
+ return`<h2>Punto de venta</h2><div class="pg">${b.products.map(p=>`<button ${stock(p)<1?'disabled':''} onclick="add('${p.id}')"><b>${esc(p.name)}</b><br>${fmt(p.price)}<br><span class="k">Stock ${stock(p)}</span></button>`).join('')||'<p class="mut">Crea productos en Inventario.</p>'}</div>
+ <h3>Carrito</h3><div class="card">${cart.map(i=>`<div class="row"><span style="flex:1">${esc(i.name)}</span><button class="b g" onclick="qty('${i.pid}',-1)">−</button>${i.qty}<button class="b g" onclick="qty('${i.pid}',1)">+</button><b>${fmt(i.qty*i.price)}</b></div>`).join('')||'<span class="mut">Vacío</span>'}
+ <div class="v" style="margin-top:8px">Total ${fmt(tot)}</div>
+ <div class="row"><select id="cu"><option value="">Cliente (opcional)</option>${b.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+ <select id="me"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select>
+ <input id="pa" type="number" min="0" placeholder="Pagado ahora (vacío = total)" size="10"></div>
+ <p class="k">Si pagas menos del total, el saldo queda como cuenta por cobrar (requiere cliente).</p>
+ <button class="b" ${cart.length?'':'disabled'} onclick="cobrar()">Cobrar</button></div>`}
+function add(id){const p=B().products.find(x=>x.id===id),i=cart.find(x=>x.pid===id);
+ if((i?i.qty:0)+1>stock(p)){say('No hay más existencias de '+p.name,1);return render()}
+ i?i.qty++:cart.push({pid:id,name:p.name,price:p.price,cost:p.cost,qty:1});render()}
+function qty(id,d){const i=cart.find(x=>x.pid===id),p=B().products.find(x=>x.id===id);
+ if(d>0&&i.qty+1>stock(p)){say('Sin existencias suficientes',1);return render()}
+ i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x!==i);render()}
+function cobrar(){if(busy||!cart.length)return;busy=true;const b=B();
+ try{for(const i of cart){const p=b.products.find(x=>x.id===i.pid);if(stock(p)<i.qty){say('Stock insuficiente: '+p.name,1);return}}
+ const total=cart.reduce((s,i)=>s+i.qty*i.price,0),pv=V('pa'),paid=pv===''?total:Math.min(total,Math.max(0,+pv)),credit=total-paid,cu=V('cu');
+ if(credit>0&&!cu){say('Para vender a crédito selecciona un cliente.',1);return}
+ const n=b.sales.length+1,me=V('me'),at=now();
+ b.sales.push({id:uid(),n,at,items:cart.map(i=>({...i})),total,method:me,paid,credit,cust:cu,void:false});
+ cart.forEach(i=>b.moves.push({id:uid(),pid:i.pid,qty:-i.qty,type:'Venta',ref:'#'+n,at}));
+ if(credit>0)b.debts.push({id:uid(),cust:cu,sale:n,bal:credit,total:credit,pays:[]});
+ if(me==='Efectivo'&&b.open&&paid>0)b.open.mv.push({t:'Venta #'+n,amt:paid});
+ cart=[];save();say('Venta #'+n+' registrada por '+fmt(total)+(credit?` (crédito ${fmt(credit)})`:''))}
+ finally{busy=false;render()}}
+
+function sales(){const b=B();return`<h2>Historial de ventas</h2><div class="tw"><table><tr><th>#</th><th>Fecha</th><th>Total</th><th>Pago</th><th>Estado</th><th></th></tr>
+ ${b.sales.slice().reverse().map(s=>`<tr><td>${s.n}</td><td>${s.at}</td><td>${fmt(s.total)}</td><td>${s.method}${s.credit?' + crédito':''}</td><td>${s.void?'<span class="neg">Anulada</span>':'Activa'}</td><td>${s.void?'':`<button class="b d" onclick="anular('${s.id}')">Anular</button>`}</td></tr>`).join('')}</table></div>
+ <p class="k">Las ventas no se borran: la anulación genera movimientos inversos de inventario, deuda y caja.</p>`}
+function anular(id){const b=B(),s=b.sales.find(x=>x.id===id);if(!s||s.void)return;s.void=true;
+ s.items.forEach(i=>b.moves.push({id:uid(),pid:i.pid,qty:i.qty,type:'Anulación venta',ref:'#'+s.n,at:now()}));
+ b.debts.filter(d=>d.sale===s.n).forEach(d=>d.bal=0);
+ if(s.method==='Efectivo'&&b.open&&s.paid>0)b.open.mv.push({t:'Anulación #'+s.n,amt:-s.paid});
+ save();say('Venta #'+s.n+' anulada con reverso completo.');render()}
+
+function inv(){const b=B();return`<h2>Inventario</h2><div class="tw"><table><tr><th>Producto</th><th>Stock</th><th>Costo</th><th>Precio</th><th>Margen</th><th>Ajuste (+/−)</th></tr>
+ ${b.products.map(p=>`<tr><td>${esc(p.name)}</td><td class="${stock(p)<=p.min?'neg':''}">${stock(p)}</td><td>${fmt(p.cost)}</td><td>${fmt(p.price)}</td><td>${p.price?Math.round((p.price-p.cost)/p.price*100):0}%</td>
+ <td><input id="a${p.id}" type="number" style="width:70px"> <button class="b g" onclick="adj('${p.id}')">Aplicar</button></td></tr>`).join('')}</table></div>
+ <h3>Nuevo producto</h3><div class="row"><input id="pn" placeholder="Nombre"><input id="pp" type="number" placeholder="Precio" style="width:90px"><input id="pc" type="number" placeholder="Costo" style="width:90px"><input id="pm" type="number" placeholder="Mínimo" style="width:80px"><input id="pq" type="number" placeholder="Stock inicial" style="width:100px"><button class="b" onclick="addProd()">Agregar</button></div>
+ <h3>Kardex (últimos movimientos)</h3><div class="tw"><table><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cant.</th><th>Ref.</th></tr>
+ ${b.moves.slice(-12).reverse().map(m=>`<tr><td>${m.at}</td><td>${esc(b.products.find(p=>p.id===m.pid)?.name||'')}</td><td>${m.type}</td><td class="${m.qty<0?'neg':'pos'}">${m.qty>0?'+':''}${m.qty}</td><td>${m.ref}</td></tr>`).join('')}</table></div>
+ <p class="k">El stock se calcula con movimientos; los errores se corrigen con un ajuste, nunca editando el historial.</p>`}
+function adj(id){const q=+V('a'+id),p=B().products.find(x=>x.id===id);if(!q)return;
+ if(stock(p)+q<0){say('El ajuste dejaría el stock en negativo.',1);return render()}
+ B().moves.push({id:uid(),pid:id,qty:q,type:'Ajuste',ref:'',at:now()});save();render()}
+function addProd(){const n=V('pn').trim();if(!n)return;const id=uid(),b=B();
+ b.products.push({id,name:n,price:+V('pp')||0,cost:+V('pc')||0,min:+V('pm')||0});
+ if(+V('pq')>0)b.moves.push({id:uid(),pid:id,qty:+V('pq'),type:'Inventario inicial',ref:'',at:now()});save();render()}
+
+function exp(){const b=B();return`<h2>Gastos</h2><div class="row"><select id="ec"><option>Arriendo</option><option>Servicios</option><option>Nómina</option><option>Proveedores</option><option>Otros</option></select>
+ <input id="ed" placeholder="Descripción"><input id="ea" type="number" placeholder="Valor" style="width:110px"><select id="em"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select><button class="b" onclick="addExp()">Registrar</button></div>
+ <div class="tw"><table><tr><th>Fecha</th><th>Categoría</th><th>Detalle</th><th>Pago</th><th>Valor</th></tr>${b.expenses.slice().reverse().map(x=>`<tr><td>${x.at}</td><td>${x.cat}</td><td>${esc(x.desc)}</td><td>${x.method}</td><td>${fmt(x.amt)}</td></tr>`).join('')}</table></div>`}
+function addExp(){const a=+V('ea');if(!(a>0))return;const b=B(),m=V('em');
+ b.expenses.push({id:uid(),cat:V('ec'),desc:V('ed'),amt:a,method:m,at:now()});
+ if(m==='Efectivo'&&b.open)b.open.mv.push({t:'Gasto: '+V('ed'),amt:-a});save();say('Gasto registrado.');render()}
+
+function cash(){const b=B(),o=b.open;let h='<h2>Caja</h2>';
+ if(!o)h+=`<div class="card"><p>No hay caja abierta.</p><div class="row"><input id="ci" type="number" placeholder="Saldo inicial"><button class="b" onclick="openCash()">Abrir caja</button></div></div>`;
+ else{const ex=o.initial+o.mv.reduce((s,x)=>s+x.amt,0);
+ h+=`<div class="card"><div class="k">Abierta desde ${o.at}</div><table><tr><td>Saldo inicial</td><td>${fmt(o.initial)}</td></tr>${o.mv.map(x=>`<tr><td>${esc(x.t)}</td><td class="${x.amt<0?'neg':'pos'}">${fmt(x.amt)}</td></tr>`).join('')}<tr><th>Efectivo esperado</th><th>${fmt(ex)}</th></tr></table>
+ <div class="row"><input id="cc" type="number" placeholder="Efectivo contado"><button class="b" onclick="closeCash()">Cerrar caja (arqueo)</button></div></div>`}
+ return h+`<h3>Historial de cierres</h3><div class="tw"><table><tr><th>Cierre</th><th>Esperado</th><th>Contado</th><th>Diferencia</th></tr>${b.sessions.slice().reverse().map(s=>`<tr><td>${s.closed}</td><td>${fmt(s.expected)}</td><td>${fmt(s.counted)}</td><td class="${s.diff<0?'neg':s.diff>0?'pos':''}">${fmt(s.diff)}</td></tr>`).join('')}</table></div>
+ <p class="k">Esperado = saldo inicial + ventas y abonos en efectivo − gastos en efectivo.</p>`}
+function openCash(){const v=+V('ci');if(V('ci')===''||v<0)return;B().open={at:now(),initial:v,mv:[]};save();say('Caja abierta.');render()}
+function closeCash(){const b=B(),o=b.open,c=+V('cc');if(V('cc')==='')return;const ex=o.initial+o.mv.reduce((s,x)=>s+x.amt,0);
+ b.sessions.push({opened:o.at,closed:now(),initial:o.initial,expected:ex,counted:c,diff:c-ex});b.open=null;save();say('Caja cerrada. Diferencia: '+fmt(c-ex));render()}
+
+function debt(){const b=B(),nm=id=>b.customers.find(c=>c.id===id)?.name||'—';
+ return`<h2>Clientes y deudas</h2><div class="row"><input id="cn" placeholder="Nuevo cliente"><button class="b g" onclick="addCust()">Agregar cliente</button></div>
+ <div class="tw"><table><tr><th>Cliente</th><th>Venta</th><th>Saldo</th><th>Abono</th></tr>${b.debts.filter(d=>d.bal>0).map(d=>`<tr><td>${esc(nm(d.cust))}</td><td>#${d.sale}</td><td>${fmt(d.bal)}</td><td><input id="b${d.id}" type="number" style="width:90px"> <select id="bm${d.id}"><option>Efectivo</option><option>Transferencia</option></select> <button class="b" onclick="abono('${d.id}')">Abonar</button></td></tr>`).join('')||'<tr><td colspan="4" class="mut">Sin cuentas por cobrar.</td></tr>'}</table></div>`}
+function addCust(){const n=V('cn').trim();if(!n)return;B().customers.push({id:uid(),name:n});save();render()}
+function abono(id){const b=B(),d=b.debts.find(x=>x.id===id),a=+V('b'+id);if(!(a>0)||a>d.bal){say('Abono inválido: no puede superar el saldo.',1);return render()}
+ d.bal-=a;d.pays.push({a,at:now()});if(V('bm'+id)==='Efectivo'&&b.open)b.open.mv.push({t:'Abono venta #'+d.sale,amt:a});save();say('Abono registrado.');render()}
+render();
+</script><script>
+document.body.insertAdjacentHTML('beforeend','<div id="pr"></div><style id="ps"></style><div id="ts"></div>');
+tabs.length=0;[['dash','📊 Dashboard'],['pos','🧾 Venta'],['mesas','🪑 Mesas'],['sales','📑 Ventas'],['inv','📦 Inventario'],['exp','💸 Gastos'],['cash','💵 Caja'],['debt','🤝 Deudas'],['tax','🏛️ Impuestos'],['neg','🏪 Negocios'],['rep','📤 Exportar']].forEach(t=>tabs.push(t));
+const MS=b=>b.mesas||(b.mesas=Array.from({length:8},(_,i)=>'Mesa '+(i+1)).concat(['Barra','Para llevar']));
+const TX=b=>b.taxes||(b.taxes=[]),act=b=>b.products.filter(p=>!p.del);
+let mesa='',q='',iq='',tk=null,delc=null,delp=null,sc='uno',pw=80;
+const go=t=>{tab=t;cart=[];note=null;render()};
+const toast=t=>{const e=document.getElementById('ts');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)};
+const oblig=(b,base)=>TX(b).filter(t=>t.kind==='p'&&t.on).reduce((s,t)=>s+(t.mode==='%'?base*t.val/100:t.val),0);
+const collected=ok=>{const c={};ok.forEach(s=>(s.taxes||[]).forEach(t=>c[t.name]=(c[t.name]||0)+t.amt));return c};
+const calc=()=>{const sub=cart.reduce((s,i)=>s+i.qty*i.price,0),tx=TX(B()).filter(t=>t.on&&t.kind==='f').map(t=>({name:t.name,rate:t.val,amt:Math.round(sub*t.val/100)}));return{sub,tx,total:sub+tx.reduce((s,t)=>s+t.amt,0)}};
+function pr(html,w,size){const e=document.getElementById('pr');e.style.width=w;e.innerHTML=html;document.getElementById('ps').textContent='@page{size:'+size+';margin:'+(w==='auto'?'12mm':'2mm')+'}';try{window.print()}catch(x){toast('Impresión bloqueada aquí: abre el enlace en una pestaña propia')}}
+function ticket(s,cp){const b=B(),bz=S.biz.find(x=>x.id===S.a),cu=b.customers.find(c=>c.id===s.cust);
+ return `<div class="tk">${cp?'<div class="c"><b>*** COPIA · CONTROL INTERNO ***</b></div>':''}<div class="c"><b>${esc(bz.name)}</b><br>Comprobante interno N° ${String(s.n).padStart(5,'0')}</div><div>${s.at}${s.mesa?'<br>'+esc(s.mesa):''}${cu?'<br>Cliente: '+esc(cu.name):''}</div><hr>${s.items.map(i=>`<div>${esc(i.name)}</div><div class="r">${i.qty} x ${fmt(i.price)} = ${fmt(i.qty*i.price)}</div>`).join('')}<hr><div class="r">Subtotal ${fmt(s.sub??s.total)}</div>${(s.taxes||[]).map(t=>`<div class="r">${esc(t.name)} ${t.rate}% ${fmt(t.amt)}</div>`).join('')}<div class="r"><b>TOTAL ${fmt(s.total)}</b></div><div>Pago: ${s.method}${s.credit?' · Crédito '+fmt(s.credit):''}</div>${cp?'<br><br>Firma: ____________________':'<div class="c">¡Gracias por su visita!</div>'}</div>`}
+function printTk(){pr(ticket(tk,0)+'<div class="pb"></div>'+ticket(tk,1),pw+'mm',pw+'mm auto')}
+function showTk(id){tk=B().sales.find(x=>x.id===id);tab='pos';cart=[];render()}
+
+function render(){
+ document.getElementById('nav').innerHTML=tabs.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ const top=`<div class="top"><select onchange="S.a=this.value;cart=[];mesa='';tk=null;save();render()">${S.biz.map(x=>`<option value="${x.id}" ${x.id===S.a?'selected':''}>${esc(x.name)} · ${esc(x.type)}</option>`).join('')}</select><button class="b g" onclick="go('neg')">⚙ Negocios</button></div>`;
+ const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';
+ const tp=tk&&tab==='pos'?`<div class="card"><div class="row"><b>🧾 Factura #${tk.n}</b><select onchange="pw=+this.value;render()"><option value="80" ${pw===80?'selected':''}>Térmica 80 mm</option><option value="58" ${pw===58?'selected':''}>Térmica 58 mm</option></select><button class="b" onclick="printTk()">🖨 Imprimir factura + copia</button><button class="b g" onclick="tk=null;render()">Cerrar</button></div><div class="prev">${ticket(tk,0)}</div><p class="k">Comprobante interno de control; no reemplaza la factura electrónica DIAN.</p></div>`:'';
+ document.getElementById('m').innerHTML=top+n+tp+({dash,pos,mesas,sales,inv,exp,cash,debt,tax,neg,rep}[tab])();note=null}
+
+function dash(){const b=B(),ok=b.sales.filter(s=>!s.void),sv=ok.reduce((s,x)=>s+(x.sub??x.total),0),cg=ok.reduce((s,x)=>s+x.items.reduce((a,i)=>a+i.cost*i.qty,0),0),ex=b.expenses.reduce((s,x)=>s+x.amt,0),ob=oblig(b,sv),col=Object.values(collected(ok)).reduce((a,c)=>a+c,0),net=sv-cg-ex-ob,pc=b.debts.reduce((s,d)=>s+d.bal,0),low=act(b).filter(p=>stock(p)<=p.min);
+ const tp={};ok.forEach(s=>s.items.forEach(i=>tp[i.name]=(tp[i.name]||0)+i.qty));const top=Object.entries(tp).sort((a,b)=>b[1]-a[1]).slice(0,5),mx=top[0]?.[1]||1;
+ const c=(k,v,g,x='')=>`<div class="card hov" onclick="go('${g}')"><div class="k">${k}</div><div class="v ${x}">${v}</div></div>`;
+ return`<h2>${esc(S.biz.find(x=>x.id===S.a).name)}</h2><div class="grid">${c('Ventas netas',fmt(sv),'sales')}${c('Gastos',fmt(ex),'exp')}${c('Utilidad neta estimada',fmt(net),'rep',net<0?'neg':'pos')}${c('Impuestos por pagar',fmt(col+ob),'tax')}${c('Por cobrar',fmt(pc),'debt')}${c('Alertas de stock',low.length,'inv',low.length?'neg':'')}</div>
+ <h3>Más vendidos</h3>${top.map(([n,u])=>`<div class="row"><span style="width:130px">${esc(n)}</span><div class="bw" style="flex:1"><div class="bar" style="width:${u/mx*100}%"></div></div><b>${u}</b></div>`).join('')||'<p class="mut">Aún sin ventas.</p>'}
+ <h3>Stock bajo</h3>${low.map(p=>`<div class="card hov" style="margin-bottom:6px" onclick="go('inv')">${esc(p.name)}: <b class="neg">${stock(p)}</b> uds (mín. ${p.min})</div>`).join('')||'<p class="mut">Sin alertas.</p>'}`}
+
+const pgrid=()=>act(B()).filter(p=>fnd(p.name,q)).map(p=>`<button ${stock(p)<1?'disabled':''} onclick="add('${p.id}')"><b>${esc(p.name)}</b><br>${fmt(p.price)}<br><span class="k">Stock ${stock(p)}</span></button>`).join('')||'<span class="mut">Sin productos.</span>';
+function pickM(i){const m=MS(B())[i];mesa=mesa===m?'':m;render()}
+function pos(){const b=B(),c=calc();
+ return`<h2>Punto de venta</h2><div class="chips">${MS(b).map((m,i)=>`<button class="chip ${m===mesa?'on':''}" onclick="pickM(${i})">${esc(m)}</button>`).join('')}</div>
+ <input placeholder="🔍 Buscar producto" value="${esc(q)}" oninput="q=this.value;document.getElementById('pgrid').innerHTML=pgrid()" style="width:100%;margin-bottom:8px"><div class="pg" id="pgrid">${pgrid()}</div>
+ <h3>Cuenta ${mesa?'· '+esc(mesa):'(sin mesa)'}</h3><div class="card">${cart.map(i=>`<div class="row"><span style="flex:1">${esc(i.name)}</span><button class="b g" onclick="qty('${i.pid}',-1)">−</button>${i.qty}<button class="b g" onclick="qty('${i.pid}',1)">+</button><b>${fmt(i.qty*i.price)}</b></div>`).join('')||'<span class="mut">Vacío</span>'}
+ <div class="row"><span class="mut">Subtotal</span><b>${fmt(c.sub)}</b></div>${c.tx.map(t=>`<div class="row"><span class="mut">${esc(t.name)} ${t.rate}%</span><b>${fmt(t.amt)}</b></div>`).join('')}<div class="v">Total ${fmt(c.total)}</div>
+ <div class="row"><select id="cu"><option value="">Cliente (opcional)</option>${b.customers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><select id="me"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select><input id="pa" type="number" min="0" placeholder="Pagado ahora (vacío = total)"></div>
+ <p class="k">Si pagas menos del total, el saldo queda a crédito (requiere cliente).</p><button class="b" ${cart.length?'':'disabled'} onclick="cobrar()">Cobrar</button></div>`}
+function cobrar(){if(busy||!cart.length)return;busy=true;const b=B();
+ try{for(const i of cart){const p=b.products.find(x=>x.id===i.pid);if(stock(p)<i.qty){say('Stock insuficiente: '+p.name,1);return}}
+ const c=calc(),total=c.total,pv=V('pa'),paid=pv===''?total:Math.min(total,Math.max(0,+pv)),credit=total-paid,cu=V('cu');
+ if(credit>0&&!cu){say('Para vender a crédito selecciona un cliente.',1);return}
+ const n=b.sales.length+1,me=V('me'),at=now(),s={id:uid(),n,at,items:cart.map(i=>({...i})),sub:c.sub,taxes:c.tx,total,method:me,paid,credit,cust:cu,mesa,void:false};
+ b.sales.push(s);cart.forEach(i=>b.moves.push({id:uid(),pid:i.pid,qty:-i.qty,type:'Venta',ref:'#'+n,at}));
+ if(credit>0)b.debts.push({id:uid(),cust:cu,sale:n,bal:credit,total:credit,pays:[]});
+ if(me==='Efectivo'&&b.open&&paid>0)b.open.mv.push({t:'Venta #'+n,amt:paid});
+ cart=[];tk=s;mesa='';save();say('Venta #'+n+' registrada por '+fmt(total))}
+ finally{busy=false;render()}}
+
+function mesas(){const b=B(),ok=b.sales.filter(s=>!s.void);return`<h2>Mesas</h2><p class="k">Toca una mesa para abrir una venta en ella.</p><div class="grid">${MS(b).map((m,i)=>{const l=ok.filter(s=>s.mesa===m);return`<div class="card hov" onclick="tab='pos';cart=[];mesa=MS(B())[${i}];render()"><b>🪑 ${esc(m)}</b><div class="k">${l.length} ventas</div><div class="v">${fmt(l.reduce((s,x)=>s+x.total,0))}</div></div>`}).join('')}</div>`}
+function sales(){const b=B();return`<h2>Ventas</h2><div class="tw"><table><tr><th>#</th><th>Fecha</th><th>Mesa</th><th>Total</th><th>Pago</th><th>Estado</th><th></th></tr>${b.sales.slice().reverse().map(s=>`<tr><td>${s.n}</td><td>${s.at}</td><td>${esc(s.mesa||'—')}</td><td>${fmt(s.total)}</td><td>${s.method}${s.credit?' + crédito':''}</td><td>${s.void?'<span class="neg">Anulada</span>':'Activa'}</td><td><button class="b g" onclick="showTk('${s.id}')">🖨 Factura</button> ${s.void?'':`<button class="b d" onclick="anular('${s.id}')">Anular</button>`}</td></tr>`).join('')}</table></div>`}
+
+function itb(){const L=act(B()).filter(p=>fnd(p.name+' '+(p.cat||''),iq));const n=(p,k)=>`<td><input type="number" value="${p[k]}" onchange="ed('${p.id}','${k}',this.value)"></td>`;
+ return`<table><tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Costo</th><th>Precio</th><th>Mín.</th><th>Valor</th><th></th></tr>${L.map(p=>{const s=stock(p);return`<tr><td><input value="${esc(p.name)}" onchange="ed('${p.id}','name',this.value)"></td><td><input value="${esc(p.cat||'')}" onchange="ed('${p.id}','cat',this.value)"></td><td class="${s<=p.min?'neg':''}"><button class="b g" onclick="st1('${p.id}',-1)">−</button> <input type="number" value="${s}" style="width:64px;min-width:0" onchange="setSt('${p.id}',this.value)"> <button class="b g" onclick="st1('${p.id}',1)">+</button></td>${n(p,'cost')}${n(p,'price')}${n(p,'min')}<td>${fmt(s*p.cost)}</td><td><button class="b d" onclick="delP('${p.id}')">${delp===p.id?'¿Seguro?':'🗑'}</button></td></tr>`}).join('')}</table>`}
+function inv(){const b=B(),L=act(b);return`<h2>Inventario</h2><div class="grid"><div class="card"><div class="k">Referencias</div><div class="v">${L.length}</div></div><div class="card"><div class="k">Valor al costo</div><div class="v">${fmt(L.reduce((s,p)=>s+stock(p)*p.cost,0))}</div></div></div>
+ <input placeholder="🔍 Buscar producto o categoría" value="${esc(iq)}" oninput="iq=this.value;document.getElementById('itb').innerHTML=itb()" style="width:100%;margin:10px 0"><div class="tw" id="itb">${itb()}</div>
+ <h3>Nuevo producto</h3><div class="row"><input id="pn" placeholder="Nombre"><input id="pk" placeholder="Categoría"><input id="pp" type="number" placeholder="Precio" style="width:90px"><input id="pc" type="number" placeholder="Costo" style="width:90px"><input id="pm" type="number" placeholder="Mínimo" style="width:80px"><input id="pq" type="number" placeholder="Stock inicial" style="width:100px"><button class="b" onclick="addProd()">Agregar</button></div>
+ <h3>Kardex</h3><div class="tw"><table><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cant.</th><th>Ref.</th></tr>${b.moves.slice(-12).reverse().map(m=>`<tr><td>${m.at}</td><td>${esc(b.products.find(p=>p.id===m.pid)?.name||'')}</td><td>${m.type}</td><td class="${m.qty<0?'neg':'pos'}">${m.qty>0?'+':''}${m.qty}</td><td>${m.ref}</td></tr>`).join('')}</table></div><p class="k">Editar stock registra un ajuste en el kardex; eliminar un producto conserva su historial.</p>`}
+function ed(id,k,v){const p=B().products.find(x=>x.id===id);p[k]=['price','cost','min'].includes(k)?Math.max(0,+v||0):v;save();render()}
+function mv(id,d,t){B().moves.push({id:uid(),pid:id,qty:d,type:t,ref:'',at:now()})}
+function setSt(id,v){const p=B().products.find(x=>x.id===id);v=+v;if(!(v>=0)){say('El stock no puede ser negativo.',1);return render()}const d=v-stock(p);if(d)mv(id,d,'Ajuste manual');save();render()}
+function st1(id,d){const p=B().products.find(x=>x.id===id);if(stock(p)+d<0)return;mv(id,d,'Ajuste');save();render()}
+function delP(id){if(delp!==id){delp=id;return render()}B().products.find(x=>x.id===id).del=true;delp=null;save();say('Producto eliminado (historial conservado).');render()}
+function addProd(){const n=V('pn').trim();if(!n)return;const id=uid(),b=B();b.products.push({id,name:n,cat:V('pk').trim(),price:+V('pp')||0,cost:+V('pc')||0,min:+V('pm')||0});if(+V('pq')>0)mv(id,+V('pq'),'Inventario inicial');save();say('Producto agregado.');render()}
+
+function neg(){return`<h2>Negocios</h2>${S.biz.map(x=>`<div class="card row"><input value="${esc(x.name)}" onchange="x_('${x.id}','name',this.value)"><select onchange="x_('${x.id}','type',this.value)">${['Comercio','Gastronomía','Servicios'].map(t=>`<option ${t===x.type?'selected':''}>${t}</option>`).join('')}</select>${x.id===S.a?'<span class="chipx">Activo</span>':`<button class="b g" onclick="S.a='${x.id}';save();render()">Abrir</button>`}<button class="b d" onclick="dn('${x.id}')">${delc===x.id?'¿Borrar con todos sus datos?':'🗑 Eliminar'}</button></div>`).join('')}
+ <h3>Nuevo negocio</h3><div class="row"><input id="nn" placeholder="Nombre"><select id="nt"><option>Gastronomía</option><option>Comercio</option><option>Servicios</option></select><button class="b" onclick="addBiz()">+ Crear</button></div>
+ <h3>Mesas del negocio activo</h3><div class="row"><input id="nm" type="number" min="0" max="60" style="width:80px" value="${MS(B()).filter(m=>m.startsWith('Mesa ')).length}"><button class="b g" onclick="setM()">Aplicar</button><span class="k">(más Barra y Para llevar)</span></div>`}
+function x_(id,k,v){S.biz.find(x=>x.id===id)[k]=v.trim()||'Negocio';save();render()}
+function dn(id){if(S.biz.length<2){say('Debe quedar al menos un negocio.',1);return render()}if(delc!==id){delc=id;return render()}delete S.d[id];S.biz=S.biz.filter(x=>x.id!==id);if(S.a===id)S.a=S.biz[0].id;delc=null;cart=[];mesa='';save();say('Negocio eliminado.');render()}
+function setM(){const n=Math.min(60,Math.max(0,+V('nm')||0));B().mesas=Array.from({length:n},(_,i)=>'Mesa '+(i+1)).concat(['Barra','Para llevar']);save();render()}
+
+function tax(){const b=B(),T=TX(b),ok=b.sales.filter(s=>!s.void),base=ok.reduce((s,x)=>s+(x.sub??x.total),0),col=collected(ok);
+ return`<h2>Impuestos y obligaciones</h2><p class="k">“En factura” se suma al total de cada venta. “Del período” se calcula sobre ventas netas (%) o como valor fijo. Confirma tarifas con tu contador.</p>
+ <div class="row"><button class="b g" onclick="addT('Impoconsumo','f',8)">+ Impoconsumo 8%</button><button class="b g" onclick="addT('IVA','f',19)">+ IVA 19%</button><button class="b g" onclick="addT('Propina voluntaria','f',10)">+ Propina 10%</button><button class="b g" onclick="addT('ICA','p',0)">+ ICA</button><button class="b g" onclick="addT('Renta / anticipo','p',0)">+ Renta</button></div>
+ <div class="tw"><table><tr><th>Activo</th><th>Nombre</th><th>Tipo</th><th>Modo</th><th>Valor</th><th></th></tr>${T.map(t=>`<tr><td><input type="checkbox" ${t.on?'checked':''} onchange="ut('${t.id}','on',this.checked)" style="width:auto"></td><td><input value="${esc(t.name)}" onchange="ut('${t.id}','name',this.value)"></td><td>${t.kind==='f'?'En factura':'Del período'}</td><td>${t.kind==='f'?'%':`<select onchange="ut('${t.id}','mode',this.value)"><option ${t.mode==='%'?'selected':''}>%</option><option ${t.mode==='$'?'selected':''}>$</option></select>`}</td><td><input type="number" value="${t.val}" onchange="ut('${t.id}','val',this.value)"></td><td><button class="b d" onclick="dt('${t.id}')">🗑</button></td></tr>`).join('')||'<tr><td colspan="6" class="mut">Sin impuestos configurados.</td></tr>'}</table></div>
+ <h3>Agregar personalizado</h3><div class="row"><input id="xn" placeholder="Nombre (ej. Seguridad social)"><select id="xk"><option value="f">En factura</option><option value="p">Del período</option></select><select id="xm"><option>%</option><option>$</option></select><input id="xv" type="number" placeholder="Valor" style="width:100px"><button class="b" onclick="addT(V('xn'),V('xk'),+V('xv')||0,V('xm'))">Agregar</button></div>
+ <h3>Resumen</h3><div class="tw"><table><tr><th>Concepto</th><th>Tipo</th><th>Monto</th></tr>${Object.entries(col).map(([k,v])=>`<tr><td>${esc(k)}</td><td>Recaudado en facturas</td><td>${fmt(v)}</td></tr>`).join('')}${T.filter(t=>t.kind==='p'&&t.on).map(t=>`<tr><td>${esc(t.name)}</td><td>Obligación del período</td><td>${fmt(t.mode==='%'?base*t.val/100:t.val)}</td></tr>`).join('')}</table></div>`}
+function addT(n,k,v,m){if(!n||!n.trim())return;TX(B()).push({id:uid(),name:n.trim(),kind:k,mode:k==='f'?'%':(m||'%'),val:v,on:true});save();render()}
+function ut(id,k,v){const t=TX(B()).find(x=>x.id===id);t[k]=k==='val'?+v||0:v;save();render()}
+function dt(id){const b=B();b.taxes=TX(b).filter(x=>x.id!==id);save();render()}
+
+function secs(b,nm){const ok=b.sales.filter(s=>!s.void),sb=x=>x.sub??x.total,st=p=>b.moves.filter(m=>m.pid===p.id).reduce((s,m)=>s+m.qty,0),sv=ok.reduce((s,x)=>s+sb(x),0),cg=ok.reduce((s,x)=>s+x.items.reduce((a,i)=>a+i.cost*i.qty,0),0),ex=b.expenses.reduce((s,x)=>s+x.amt,0),ob=oblig(b,sv),col=collected(ok),ct=Object.values(col).reduce((a,c)=>a+c,0);
+ const grp=(a,kf,vf)=>{const m={};a.forEach(x=>{const k=kf(x);m[k]=(m[k]||0)+vf(x)});return Object.entries(m).map(([k,v])=>[k,fmt(v)])},pq={};ok.forEach(s=>s.items.forEach(i=>{const r=pq[i.name]||(pq[i.name]=[0,0]);r[0]+=i.qty;r[1]+=i.qty*i.price}));
+ return[[nm+' · Resumen',['Indicador','Valor'],[['Ventas netas',fmt(sv)],['N° de ventas',ok.length],['Ticket promedio',fmt(ok.length?sv/ok.length:0)],['Costo de mercancía',fmt(cg)],['Gastos',fmt(ex)],['Utilidad antes de obligaciones',fmt(sv-cg-ex)],['Obligaciones del período',fmt(ob)],['Utilidad neta estimada',fmt(sv-cg-ex-ob)],['Impuestos recaudados en facturas',fmt(ct)],['Por cobrar',fmt(b.debts.reduce((s,d)=>s+d.bal,0))]]],
+ ['Ventas por método',['Método','Total'],grp(ok,s=>s.method,s=>s.total)],['Ventas por mesa',['Mesa','Total'],grp(ok,s=>s.mesa||'Sin mesa',s=>s.total)],
+ ['Productos más vendidos',['Producto','Uds','Ingreso'],Object.entries(pq).sort((a,b)=>b[1][0]-a[1][0]).slice(0,10).map(([k,v])=>[k,v[0],fmt(v[1])])],
+ ['Inventario',['Producto','Stock','Costo','Precio','Valor'],act(b).map(p=>[p.name,st(p),fmt(p.cost),fmt(p.price),fmt(st(p)*p.cost)])],
+ ['Gastos por categoría',['Categoría','Total'],grp(b.expenses,x=>x.cat,x=>x.amt)],
+ ['Impuestos y obligaciones',['Concepto','Tipo','Monto'],[...Object.entries(col).map(([k,v])=>[k,'En factura',fmt(v)]),...TX(b).filter(t=>t.kind==='p'&&t.on).map(t=>[t.name,'Del período',fmt(t.mode==='%'?sv*t.val/100:t.val)])]],
+ ['Cuentas por cobrar',['Cliente','Venta','Saldo'],b.debts.filter(d=>d.bal>0).map(d=>[b.customers.find(c=>c.id===d.cust)?.name||'—','#'+d.sale,fmt(d.bal)])],
+ ['Cierres de caja',['Cierre','Esperado','Contado','Diferencia'],b.sessions.map(s=>[s.closed,fmt(s.expected),fmt(s.counted),fmt(s.diff)])]]}
+const allS=()=>S.biz.filter(x=>sc==='todos'||x.id===S.a).flatMap(x=>secs(S.d[x.id],x.name));
+const toMD=a=>'# Reporte AURA Resto-Bar\n_Generado: '+now()+'_\n\n'+a.map(([h,hd,r])=>`## ${h}\n\n| ${hd.join(' | ')} |\n|${hd.map(()=>'---').join('|')}|\n${(r.length?r:[hd.map(()=>'—')]).map(x=>'| '+x.join(' | ')+' |').join('\n')}\n`).join('\n');
+const toH=a=>a.map(([h,hd,r])=>`<h2>${esc(h)}</h2><div class="tw"><table><tr>${hd.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr>${x.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>`).join('');
+function rep(){const a=allS();return`<h2>Exportar para análisis</h2><div class="row"><select onchange="sc=this.value;render()"><option value="uno" ${sc==='uno'?'selected':''}>Solo este negocio</option><option value="todos" ${sc==='todos'?'selected':''}>Todos (consolidado)</option></select><button class="b" onclick="pdf()">🖨 Imprimir / Guardar como PDF</button><button class="b g" onclick="cp()">📋 Copiar Markdown</button></div>
+ <p class="k">Para PDF elige “Guardar como PDF” en el diálogo de impresión. El Markdown se copia para pegarlo en un archivo .md.</p><textarea id="mdo" readonly style="width:100%;height:220px;font:12px monospace;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px">${esc(toMD(a))}</textarea><h3>Vista previa</h3>${toH(a)}`}
+function cp(){const t=document.getElementById('mdo');t.select();let ok=0;try{ok=document.execCommand('copy')}catch(e){}toast(ok?'Markdown copiado ✔':'Selecciona el texto y copia con Ctrl+C')}
+function pdf(){pr('<div class="rp"><h1 style="font-size:18px">Reporte AURA Resto-Bar</h1><p>'+now()+'</p>'+toH(allS())+'</div>','auto','A4')}
+render();
+</script><script>
+let role=null,who='',ask=null,lr='o',fl=0,lk=0;
+const TO=[...tabs,['sec','🔐 Seguridad']],TM=[['pos','🧾 Venta'],['inv','📦 Inventario']];
+const hx=async s=>{try{const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('aura|'+s));return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return'p|'+s}};
+async function setup(){const a=V('s1'),m=V('s2');if(a.length<4||m.length<4||a===m){say('Cada PIN debe tener mínimo 4 dígitos y ser distintos.',1);return render()}S.sec={o:await hx(a),m:await hx(m)};save();say('PIN guardados. Ingresa con tu rol.');render()}
+async function login(){if(Date.now()<lk){say('Demasiados intentos. Espera 30 segundos.',1);return render()}const h=await hx(V('lp')),nm=(V('ln')||'').trim();
+ if(h!==S.sec[lr]){if(++fl>=5){lk=Date.now()+30000;fl=0}say('PIN incorrecto.',1);return render()}fl=0;role=lr==='o'?'owner':'mesero';who=lr==='o'?'Dueño':(nm||'Mesero');tab=role==='owner'?'dash':'pos';cart=[];render()}
+function logout(){role=null;tk=null;ask=null;cart=[];mesa='';render()}
+async function chg(){const a=V('n1'),m=V('n2');if((a&&a.length<4)||(m&&m.length<4)){say('Mínimo 4 dígitos.',1);return render()}const o=a?await hx(a):S.sec.o,e=m?await hx(m):S.sec.m;if(o===e){say('Los PIN deben ser distintos.',1);return render()}S.sec={o,m:e};save();say('PIN actualizados.');render()}
+function loginUI(){if(!S.sec)return`<div class="card lg"><h2>🔐 Configura el acceso</h2><p>Crea un PIN (mín. 4 dígitos) para cada rol.</p><label>PIN del dueño<br><input id="s1" type="password" inputmode="numeric" autocomplete="new-password" style="width:100%"></label><br><br><label>PIN de meseros<br><input id="s2" type="password" inputmode="numeric" autocomplete="new-password" style="width:100%"></label><br><br><button class="b big" style="width:100%" onclick="setup()">Guardar y continuar</button></div>`;
+ return`<div class="card lg"><h2>🍽️ AURA Resto-Bar</h2>${S.biz.length?'':''}<div class="chips"><button class="chip ${lr==='o'?'on':''}" onclick="lr='o';render()">👑 Dueño</button><button class="chip ${lr==='m'?'on':''}" onclick="lr='m';render()">🍽️ Mesero</button></div>${lr==='m'?'<label>Tu nombre<br><input id="ln" style="width:100%" placeholder="Para registrar tus ventas"></label><br><br>':''}<label>PIN<br><input id="lp" type="password" inputmode="numeric" autocomplete="off" style="width:100%" onkeydown="if(event.key==='Enter')login()"></label><br><br><button class="b big" style="width:100%" onclick="login()">Entrar</button></div>`}
+
+const _tkt=ticket;ticket=(s,cp,re)=>{let h=_tkt(s,cp);if(s.by)h=h.replace('<hr>','<br>Atendió: '+esc(s.by)+'<hr>');return re?h.replace('<div class="tk">','<div class="tk"><div class="c"><b>*** REIMPRESIÓN ***</b></div>'):h};
+const _cob=cobrar;cobrar=function(){const b=B(),n0=b.sales.length;_cob();if(b.sales.length>n0){const s=b.sales[b.sales.length-1];s.by=who;s.log=[];ask=s;save();render()}};
+function printTk(){const s=ask||tk;if(!s)return;const re=(s.log||[]).length>0;(s.log=s.log||[]).push({at:now(),by:who,t:re?'Reimpresión':'Impresión'});tk=s;ask=null;save();pr(ticket(s,0,re)+'<div class="pb"></div>'+ticket(s,1,re),pw+'mm',pw+'mm auto');render()}
+function mesas(){const b=B(),ok=b.sales.filter(s=>!s.void);return`<h2>Mesas</h2><div class="row"><input id="mn" placeholder="Nombre de la nueva mesa (ej. Terraza 1)" style="flex:1;min-width:200px"><button class="b big" onclick="addMesa()">+ Agregar mesa</button></div><p class="k">Toca una mesa para abrir una venta. Con ✕ la quitas (el historial de ventas se conserva).</p><div class="grid">${MS(b).map((m,i)=>{const l=ok.filter(s=>s.mesa===m);return`<div class="card hov" onclick="tab='pos';cart=[];mesa=MS(B())[${i}];render()"><div class="row" style="margin:0"><b>🪑 ${esc(m)}</b><button class="b d" style="margin-left:auto;min-height:36px;padding:2px 10px" aria-label="Quitar mesa" onclick="event.stopPropagation();delMesa(${i})">✕</button></div><div class="k">${l.length} ventas</div><div class="v">${fmt(l.reduce((s,x)=>s+x.total,0))}</div></div>`}).join('')}</div>`}
+function addMesa(){const n=V('mn').trim(),b=B();if(!n)return;if(MS(b).includes(n)){say('Esa mesa ya existe.',1);return render()}b.mesas.push(n);save();render()}
+function delMesa(i){const b=B();b.mesas.splice(i,1);mesa='';save();render()}
+const _neg=neg;neg=()=>{const h=_neg(),i=h.indexOf('<h3>Mesas del negocio activo');return i<0?h:h.slice(0,i)};
+function sales(){const b=B();return`<h2>Ventas</h2><div class="tw"><table><tr><th>#</th><th>Fecha</th><th>Atendió</th><th>Mesa</th><th>Total</th><th>Pago</th><th>Impr.</th><th>Estado</th><th></th></tr>${b.sales.slice().reverse().map(s=>`<tr><td>${s.n}</td><td>${s.at}</td><td>${esc(s.by||'—')}</td><td>${esc(s.mesa||'—')}</td><td>${fmt(s.total)}</td><td>${s.method}${s.credit?' + crédito':''}</td><td>${(s.log||[]).length}</td><td>${s.void?'<span class="neg">Anulada</span>':'Activa'}</td><td><button class="b g" onclick="showTk('${s.id}')">🖨 Factura</button> ${s.void?'':`<button class="b d" onclick="anular('${s.id}')">Anular</button>`}</td></tr>`).join('')}</table></div>`}
+const roT=()=>{const L=act(B()).filter(p=>fnd(p.name+' '+(p.cat||''),iq));return`<table><tr><th>Producto</th><th>Categoría</th><th>Disponible</th><th>Precio</th></tr>${L.map(p=>{const s=stock(p);return`<tr><td>${esc(p.name)}</td><td>${esc(p.cat||'—')}</td><td class="${s<=p.min?'neg':'pos'}"><b>${s}</b>${s<=p.min?' · bajo':''}</td><td>${fmt(p.price)}</td></tr>`}).join('')}</table>`};
+function invRO(){return`<h2>Inventario disponible</h2><input placeholder="🔍 Buscar producto" value="${esc(iq)}" oninput="iq=this.value;document.getElementById('itb').innerHTML=roT()" style="width:100%;margin-bottom:10px"><div class="tw" id="itb">${roT()}</div><p class="k">Solo consulta.</p>`}
+function sec(){const L=S.biz.flatMap(x=>S.d[x.id].sales.flatMap(s=>(s.log||[]).map(l=>({...l,n:s.n,bz:x.name})))).slice(-12).reverse();return`<h2>Seguridad y accesos</h2><p><b>Dueño</b>: ve y edita todo. <b>Mesero</b>: solo consulta el inventario disponible (sin costos) y registra ventas.</p><div class="card"><h3 style="margin-top:0">Cambiar PIN</h3><div class="row"><input id="n1" type="password" inputmode="numeric" placeholder="Nuevo PIN del dueño"><input id="n2" type="password" inputmode="numeric" placeholder="Nuevo PIN de meseros"><button class="b" onclick="chg()">Guardar</button></div><p class="k">Déjalo vacío si no quieres cambiarlo.</p></div><h3>Registro de impresiones</h3><div class="tw"><table><tr><th>Fecha</th><th>Negocio</th><th>Venta</th><th>Tipo</th><th>Usuario</th></tr>${L.map(l=>`<tr><td>${l.at}</td><td>${esc(l.bz)}</td><td>#${l.n}</td><td class="${l.t==='Reimpresión'?'neg':''}">${l.t}</td><td>${esc(l.by)}</td></tr>`).join('')||'<tr><td colspan="5" class="mut">Sin impresiones.</td></tr>'}</table></div><p class="k">Nota: el acceso por PIN se guarda en este navegador. Protege el uso diario, pero no sustituye un sistema con servidor si alguien tiene acceso técnico al dispositivo.</p>`}
+
+function render(){const nv=document.getElementById('nav'),ap=document.querySelector('aside');ap.style.display=role?'':'none';document.querySelector('.app').style.gridTemplateColumns=role?'':'1fr';
+ if(!role){const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';nv.innerHTML='';document.getElementById('m').innerHTML=n+loginUI();note=null;return}
+ const T=role==='owner'?TO:TM,ids=T.map(t=>t[0]);if(!ids.includes(tab))tab=ids[0];
+ nv.innerHTML=T.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ const bz=S.biz.find(x=>x.id===S.a),top=`<div class="top">${role==='owner'?`<select aria-label="Negocio activo" onchange="S.a=this.value;cart=[];mesa='';tk=null;save();render()">${S.biz.map(x=>`<option value="${x.id}" ${x.id===S.a?'selected':''}>${esc(x.name)} · ${esc(x.type)}</option>`).join('')}</select><button class="b g" onclick="go('neg')">⚙ Negocios</button>`:`<b style="font-size:1.15rem">🏪 ${esc(bz.name)}</b>`}<span class="chipx" style="margin-left:auto">${role==='owner'?'👑 Dueño':'🍽️ '+esc(who)}</span><button class="b g" onclick="logout()">Salir</button></div>`;
+ const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';
+ const tp=tk&&tab==='pos'?`<div class="card"><div class="row"><b>🧾 Factura #${tk.n}</b><select aria-label="Ancho de papel" onchange="pw=+this.value;render()"><option value="80" ${pw===80?'selected':''}>Térmica 80 mm</option><option value="58" ${pw===58?'selected':''}>Térmica 58 mm</option></select><button class="b" onclick="ask=tk;render()">🖨 ${(tk.log||[]).length?'Volver a imprimir':'Imprimir factura'}</button><button class="b g" onclick="tk=null;render()">Cerrar</button></div><div class="prev">${ticket(tk,0)}</div><p class="k">Comprobante interno de control; no reemplaza la factura electrónica DIAN.</p></div>`:'';
+ const md=ask?`<div class="ov"><div class="mo" role="dialog" aria-modal="true" aria-label="Confirmar impresión"><h3 style="margin-top:0">🖨️ ¿Imprimir factura?</h3><p>Venta #${ask.n} · <b>${fmt(ask.total)}</b><br>Se imprimirán el original y la copia de control interno.</p>${(ask.log||[]).length?'<p class="neg"><b>Es una reimpresión y quedará registrada.</b></p>':''}<div class="row"><button class="b big" onclick="printTk()">Sí, imprimir</button><button class="b g big" onclick="ask=null;render()">Ahora no</button></div></div></div>`:'';
+ const M={dash,pos,mesas,sales,inv,exp,cash,debt,tax,neg,rep,sec};
+ document.getElementById('m').innerHTML=top+n+tp+(role==='owner'?M[tab]():(tab==='inv'?invRO():pos()))+md;note=null}
+render();
+</script><script>
+let cat='',newImg='';
+const hue=n=>{let h=0;for(const c of n||'?')h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 45% 38%)`};
+const thumb=(u,n,c='th')=>u?`<img class="${c}" src="${u}" alt="${esc(n||'')}">`:`<span class="${c}" style="background:${hue(n)}">${esc((n||'?').charAt(0).toUpperCase())}</span>`;
+const cats_=()=>[...new Set(act(B()).map(p=>p.cat).filter(Boolean))];
+/* Paleta por categoría: tonos desaturados y estables (misma categoría = mismo color). */
+const CAT_RULES=[
+ [/sin alcohol|mocktail/i,152],
+ [/michelada/i,0],
+ [/cerveza|birra/i,38],
+ [/jarra|cubetazo|pinta|vaso/i,190],
+ [/shot/i,265],
+ [/vino/i,342],
+ [/coctel|cóctel/i,300],
+ [/licor|destilado|aguardiente|whisky|vodka|ron\b|tequila/i,28],
+ [/postre|dulce|helado|torta|reposter/i,336],
+ [/sopa|caldo|crema/i,42],
+ [/entrada|pasaboca|compartir|antipast/i,152],
+ [/licor|trago|whisky|ron\b|vodka|tequila|vino|cerveza/i,265],
+ [/bebida|coctel|cóctel|jugo|gaseosa|agua|café|cafe|malteada|limonada|soda|bar\b/i,208],
+ [/pizza|hamburg|perro caliente|comida rápida|comida rapida/i,0],
+ [/desayuno|brunch|arepa|huevo/i,44],
+ [/adici|extra|acompa|guarnici/i,88],
+ [/carne|pollo|pescado|marisco|plato|fuerte|principal|especial|asado|parrilla/i,20],
+ [/ensalada|vegetarian|saludable|vegano/i,132]
+];
+const CAT_HUES=[208,152,20,336,265,44,0,88,192,300,170,318];
+function catColor(name){const n=String(name||'').trim();if(!n)return'hsl(200 12% 46%)';
+ for(const[r,h]of CAT_RULES)if(r.test(n))return'hsl('+h+' 42% 42%)';
+ let i=0;for(const c of n.toLowerCase())i=(i*31+c.charCodeAt(0))%997;
+ return'hsl('+CAT_HUES[i%CAT_HUES.length]+' 38% 43%)'}
+function imgSet(id,f){if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,360/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);const u=c.toDataURL('image/jpeg',.72);
+ if(id==='new'){newImg=u;document.getElementById('npv').innerHTML=thumb(u,'Nuevo');return}
+ const p=B().products.find(x=>x.id===id),old=p.img;p.img=u;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){p.img=old;toast('⚠ Almacenamiento lleno: usa menos imágenes');return}render()};im.onerror=()=>toast('No se pudo leer la imagen');im.src=r.result};r.readAsDataURL(f)}
+function rmImg(id){delete B().products.find(x=>x.id===id).img;save();render()}
+const _inv=inv;inv=()=>_inv().replace('<button class="b" onclick="addProd()">Agregar</button>','<label class="b g up">📷 Foto<input type="file" accept="image/*" hidden onchange="imgSet(\'new\',this.files[0])"></label><span id="npv">'+(newImg?thumb(newImg,'Nuevo'):'')+'</span><button class="b" onclick="addProd()">Agregar</button>');
+function addProd(){const n=V('pn').trim();if(!n)return;const id=uid(),b=B(),p={id,name:n,cat:V('pk').trim(),price:+V('pp')||0,cost:+V('pc')||0,min:+V('pm')||0,img:newImg};b.products.push(p);if(+V('pq')>0)mv(id,+V('pq'),'Inventario inicial');
+ try{localStorage.setItem(K,JSON.stringify(S))}catch(e){p.img='';toast('⚠ Sin espacio: producto guardado sin foto')}newImg='';save();say('Producto agregado.');render()}
+function itb(){const L=act(B()).filter(p=>fnd(p.name+' '+(p.cat||''),iq));const n=(p,k)=>`<td><input type="number" value="${p[k]}" onchange="ed('${p.id}','${k}',this.value)"></td>`;
+ return`<table><tr><th>Foto</th><th>Producto</th><th>Categoría</th><th>Stock</th><th>Costo</th><th>Precio</th><th>Mín.</th><th>Valor</th><th></th></tr>${L.map(p=>{const s=stock(p);return`<tr><td style="white-space:nowrap"><label class="ph" title="Cambiar foto">${thumb(p.img,p.name)}<input type="file" accept="image/*" hidden onchange="imgSet('${p.id}',this.files[0])"></label>${p.img?` <button class="b g" style="min-height:34px;padding:0 8px" aria-label="Quitar foto" onclick="rmImg('${p.id}')">✕</button>`:''}</td><td><input value="${esc(p.name)}" onchange="ed('${p.id}','name',this.value)"></td><td><input value="${esc(p.cat||'')}" onchange="ed('${p.id}','cat',this.value)"></td><td class="${s<=p.min?'neg':''}"><button class="b g" onclick="st1('${p.id}',-1)">−</button> <input type="number" value="${s}" style="width:70px;min-width:0" onchange="setSt('${p.id}',this.value)"> <button class="b g" onclick="st1('${p.id}',1)">+</button></td>${n(p,'cost')}${n(p,'price')}${n(p,'min')}<td>${fmt(s*p.cost)}</td><td><button class="b d" onclick="delP('${p.id}')">${delp===p.id?'¿Seguro?':'🗑'}</button></td></tr>`}).join('')}</table>`}
+
+const pg2=()=>{const inC=id=>(cart.find(i=>i.pid===id)||{}).qty||0;
+ const L=act(B()).filter(p=>(!cat||p.cat===cat)&&fnd(p.name+' '+(p.cat||''),q));
+ return L.map(p=>{const s=stock(p),c=inC(p.id),cc=catColor(p.cat);
+  return`<button class="mi ${c?'sel':''}" style="--cc:${cc}" ${s<1?'disabled aria-disabled="true"':''} onclick="add('${p.id}')">${c?`<span class="bd" aria-label="${c} en la cuenta">${c}</span>`:''}${s<1?'<span class="ag">Agotado</span>':''}${thumb(p.img,p.name,'th big')}<span class="mi-cat">${esc(p.cat||'General')}</span><b class="mi-name">${esc(p.name)}</b><span class="pr">${fmt(p.price)}</span><span class="k">${s<1?'Sin stock':s<=p.min?'⚠ Quedan '+s:'Disponible: '+s}</span></button>`}).join('')||
+  `<div class="no-res"><b>Sin resultados</b>No encontramos productos con “${esc(q||cat||'todo')}”. Prueba otra palabra o cambia de categoría.</div>`};
+function pos(){const b=B(),c=calc(),cs=cats_();
+ return`<h2>Punto de venta</h2><div class="chips">${MS(b).map((m,i)=>`<button class="chip ${m===mesa?'on':''}" onclick="pickM(${i})">🪑 ${esc(m)}</button>`).join('')}</div>
+ <div class="pl"><div><input placeholder="🔍 Buscar en el menú" value="${esc(q)}" oninput="q=this.value;document.getElementById('pgrid').innerHTML=pg2()" style="width:100%;margin-bottom:10px">
+ <div class="chips"><button class="chip ${cat?'':'on'}" onclick="cat='';render()">Todo</button>${cs.map((x,i)=>`<button class="chip ${x===cat?'on':''}" onclick="cat=cats_()[${i}];render()">${esc(x)}</button>`).join('')}</div><div class="mg" id="pgrid">${pg2()}</div></div>
+ <div class="cartp card"><h3 style="margin-top:0">🧾 Cuenta ${mesa?'· '+esc(mesa):'(sin mesa)'}</h3>${cart.map(i=>{const p=b.products.find(x=>x.id===i.pid)||{};return`<div class="row">${thumb(p.img,i.name,'th sm')}<span style="flex:1">${esc(i.name)}</span><button class="b g" onclick="qty('${i.pid}',-1)">−</button><b>${i.qty}</b><button class="b g" onclick="qty('${i.pid}',1)">+</button></div>`}).join('')||'<span class="mut">Toca un producto para agregarlo.</span>'}
+ <div class="row"><span class="mut">Subtotal</span><b>${fmt(c.sub)}</b></div>${c.tx.map(t=>`<div class="row"><span class="mut">${esc(t.name)} ${t.rate}%</span><b>${fmt(t.amt)}</b></div>`).join('')}<div class="v">Total ${fmt(c.total)}</div>
+ <div class="row"><select id="cu" aria-label="Cliente"><option value="">Cliente (opcional)</option>${b.customers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><select id="me" aria-label="Método de pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select></div><input id="pa" type="number" min="0" placeholder="Pagado ahora (vacío = total)" style="width:100%">
+ <p class="k">Si pagas menos del total, el saldo queda a crédito (requiere cliente).</p><button class="b big" style="width:100%" ${cart.length?'':'disabled'} onclick="cobrar()">Cobrar</button></div></div>`}
+const roT2=()=>`<div class="mg">${act(B()).filter(p=>fnd(p.name+' '+(p.cat||''),iq)).map(p=>{const s=stock(p),cc=catColor(p.cat);return`<div class="mi ro" style="--cc:${cc}">${thumb(p.img,p.name,'th big')}<span class="mi-cat">${esc(p.cat||'General')}</span><b class="mi-name">${esc(p.name)}</b><span class="pr ${s<=p.min?'neg':''}">${s>0?s+' disponibles':'Agotado'}${s>0&&s<=p.min?' · bajo':''}</span></div>`}).join('')||'<div class="no-res"><b>Sin resultados</b>Prueba con otra palabra.</div>'}</div>`;
+function invRO(){return`<h2>Inventario disponible</h2><input placeholder="🔍 Buscar producto" value="${esc(iq)}" oninput="iq=this.value;document.getElementById('itb').innerHTML=roT2()" style="width:100%;margin-bottom:12px"><div id="itb">${roT2()}</div><p class="k">Solo consulta.</p>`}
+render();
+</script><script>
+S.cfg=Object.assign({app:'AURA Resto-Bar',logo:'',ac:'',bg:'',card:'',theme:'auto',fs:17,lt:'',lm:'',lbg:'',lbgImg:'',nit:'',dir:'',tel:'',foot:'',showTax:false},S.cfg||{});
+const OR=b=>b.orders||(b.orders={}),PD=b=>b.paid||(b.paid={}),isInc=t=>t.inc!==false&&!/propina/i.test(t.name);
+const ST=()=>S.staff||(S.staff=S.sec&&S.sec.m?[{id:uid(),name:'Mesero',pin:S.sec.m}]:[]);
+TM.splice(1,0,['mesas','🪑 Mesas']);TO.push(['cfg','⚙️ Configuración']);
+function applyCfg(){const c=S.cfg,r=document.documentElement,s=r.style,p=(k,v)=>v?s.setProperty(k,v):s.removeProperty(k);
+ const ac=c.ac||'#286d68',hex=ac.replace('#',''),valid=/^[0-9a-f]{6}$/i.test(hex);
+ let rr=40,gg=109,bb=104;if(valid){rr=parseInt(hex.slice(0,2),16);gg=parseInt(hex.slice(2,4),16);bb=parseInt(hex.slice(4,6),16)}
+ const lum=(v)=>{v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)},light=.2126*lum(rr)+.7152*lum(gg)+.0722*lum(bb),accentText=light>.42?'#26343b':'#ffffff';
+ p('--ac',ac);p('--ac-text',accentText);p('--acs','color-mix(in srgb,'+ac+' 15%,var(--card))');p('--lg',`linear-gradient(135deg,${ac},color-mix(in srgb,${ac} 78%,#17252a))`);
+ p('--bg',c.bg);p('--card',c.card);
+ const bg=c.bg||'#f5f7f8',card=c.card||'#ffffff',dark=c.theme==='dark';
+ if(!c.bg)p('--bg',dark?'#151c20':'#f5f7f8');
+ if(!c.card)p('--card',dark?'#1e282d':'#ffffff');
+ // Mantiene el contraste de texto legible en superficies claras y oscuras.
+ const isDark=dark||(c.bg&&(/^#(?:0[0-9a-f]|1[0-9a-f]|2[0-9a-f])$/i.test(bg)));
+ p('--tx',isDark?'#e8eeee':'#26343b');p('--mut',isDark?'#a5b2b6':'#687780');p('--bd',isDark?'#344248':'#e2e8ea');
+ c.theme==='auto'?r.removeAttribute('data-theme'):r.setAttribute('data-theme',c.theme);s.fontSize=c.fs+'px';document.title=c.app}
+function rd(f,m,cb,png){if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(png?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.65))};im.onerror=()=>toast('No se pudo leer la imagen');im.src=r.result};r.readAsDataURL(f)}
+function logoAccent(dataUrl,done){const im=new Image();im.onload=()=>{try{const c=document.createElement('canvas');c.width=48;c.height=48;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,48,48);const d=x.getImageData(0,0,48,48).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=16){if(d[i+3]<100)continue;const mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]);if(mx>242&&mx-mn<18)continue;r+=d[i];g+=d[i+1];b+=d[i+2];n++}if(n){r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);const f=v=>v.toString(16).padStart(2,'0');done('#'+f(r)+f(g)+f(b))}}catch(e){}};im.src=dataUrl}
+function logoSet(k,f){rd(f,k==='logo'?260:1000,u=>{const o=S.cfg[k],oa=S.cfg.ac;S.cfg[k]=u;if(k==='logo')logoAccent(u,a=>{S.cfg.ac=a;save();applyCfg();render()});try{localStorage.setItem(K,JSON.stringify(S))}catch(e){S.cfg[k]=o;S.cfg.ac=oa;toast('⚠ Almacenamiento lleno');return}applyCfg();render()},k==='logo')}
+function cf(k,v){S.cfg[k]=k==='fs'?+v:v;save();applyCfg();render()}
+function cfReset(){Object.assign(S.cfg,{ac:'',bg:'',card:'',theme:'auto',fs:17});save();applyCfg();render()}
+
+function sync(){const b=B();if(!mesa)return;if(cart.length){OR(b)[mesa]={items:cart.map(x=>({...x}))};delete PD(b)[mesa]}else delete OR(b)[mesa];save()}
+const _add=add,_qty=qty;add=function(id){_add(id);sync()};qty=function(id,d){_qty(id,d);sync()};
+function pickM(i){const m=MS(B())[i];if(mesa===m){mesa='';cart=[]}else{mesa=m;cart=((OR(B())[m]||{}).items||[]).map(x=>({...x}))}render()}
+function openM(i){tab='pos';mesa=MS(B())[i];cart=((OR(B())[mesa]||{}).items||[]).map(x=>({...x}));render()}
+function freeM(i){delete PD(B())[MS(B())[i]];save();render()}
+const mst=(b,m)=>OR(b)[m]?'r':PD(b)[m]?'v':'';
+function mesas(){const b=B(),own=role==='owner';return`<h2>Mesas</h2>${own?`<div class="row"><input id="mn" placeholder="Nueva mesa (ej. Terraza 1)" style="flex:1;min-width:200px"><button class="b big" onclick="addMesa()">+ Agregar mesa</button></div>`:''}<p><span class="dot r" style="margin-left:0"></span>Por cobrar<span class="dot v"></span>Cobrada<span class="dot"></span>Libre</p><div class="grid">${MS(b).map((m,i)=>{const o=OR(b)[m],st=mst(b,m),t=o?o.items.reduce((s,x)=>s+x.qty*x.price,0):0,n=o?o.items.reduce((s,x)=>s+x.qty,0):0;return`<div class="card hov mesa ${st}" onclick="openM(${i})"><div class="row" style="margin:0"><b>🪑 ${esc(m)}</b>${own?`<button class="b d" style="margin-left:auto;min-height:36px;padding:2px 10px" aria-label="Quitar mesa" onclick="event.stopPropagation();delMesa(${i})">✕</button>`:''}</div><div class="v">${st==='r'?fmt(t):st==='v'?'Cobrada ✓':'Libre'}</div><div class="k">${st==='r'?n+' productos por cobrar':st==='v'?`<button class="b g" onclick="event.stopPropagation();freeM(${i})">Liberar mesa</button>`:'Toca para tomar pedido'}</div></div>`}).join('')}</div>`}
+
+const calc3=()=>{const b=B(),g=cart.reduce((s,i)=>s+i.qty*i.price,0),T=TX(b).filter(t=>t.on&&t.kind==='f'),ir=T.filter(isInc).reduce((s,t)=>s+t.val,0)/100,base=g/(1+ir),tx=T.map(t=>isInc(t)?{name:t.name,rate:t.val,amt:Math.round(base*t.val/100),add:0}:{name:t.name,rate:t.val,amt:Math.round(g*t.val/100),add:1});return{g,base,tx,total:g+tx.filter(t=>t.add).reduce((s,t)=>s+t.amt,0)}};
+function pos(){const b=B(),c=calc3(),cs=cats_();
+ return`<h2>Punto de venta</h2><div class="chips">${MS(b).map((m,i)=>`<button class="chip ${mst(b,m)} ${m===mesa?'on':''}" onclick="pickM(${i})">🪑 ${esc(m)}</button>`).join('')}</div>
+ <div class="pl"><div><div class="pos-search"><input id="pq" type="search" inputmode="search" autocomplete="off" aria-label="Buscar producto" placeholder="🔍 Buscar producto o categoría" value="${esc(q)}" oninput="q=this.value;document.getElementById('qclear').style.display=q?'flex':'none';document.getElementById('pgrid').innerHTML=pg2()"><button id="qclear" class="qclear" type="button" aria-label="Borrar búsqueda" style="display:${q?'flex':'none'}" onclick="q='';document.getElementById('pq').value='';this.style.display='none';document.getElementById('pgrid').innerHTML=pg2();document.getElementById('pq').focus()">✕</button></div>
+ <div class="chips"><button class="chip ${cat?'':'on'}" onclick="cat='';render()">Todo</button>${cs.map((x,i)=>`<button class="chip ${x===cat?'on':''}" data-cc="1" style="--cc:${catColor(x)}" onclick="cat=cats_()[${i}];render()">${esc(x)}</button>`).join('')}</div>${cs.length?'':'<p class="k" style="margin:0 0 4px">💡 Agrega una <b>categoría</b> a tus productos en Inventario para agruparlos y colorearlos aquí.</p>'}<div class="mg" id="pgrid">${pg2()}</div></div>
+ <div class="cartp card"><h3 style="margin-top:0">🧾 Cuenta ${mesa?'· '+esc(mesa):'(sin mesa)'}</h3>${mesa?'<p class="k">La cuenta queda abierta (por cobrar) y puedes agregar más pedidos cuando la mesa lo pida.</p>':''}${cart.map(i=>{const p=b.products.find(x=>x.id===i.pid)||{};return`<div class="row">${thumb(p.img,i.name,'th sm')}<span style="flex:1">${esc(i.name)}</span><button class="b g" onclick="qty('${i.pid}',-1)">−</button><b>${i.qty}</b><button class="b g" onclick="qty('${i.pid}',1)">+</button></div>`}).join('')||'<span class="mut">Toca un producto para agregarlo.</span>'}
+ ${c.tx.filter(t=>t.add).map(t=>`<div class="row"><span class="mut">${esc(t.name)} ${t.rate}%</span><b>${fmt(t.amt)}</b></div>`).join('')}<div class="v">Total ${fmt(c.total)}</div>
+ <div class="row"><select id="cu" aria-label="Cliente"><option value="">Cliente (opcional)</option>${b.customers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select><select id="me" aria-label="Método de pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option></select></div><input id="pa" type="number" min="0" placeholder="Pagado ahora (vacío = total)" style="width:100%">
+ <p class="k">Si pagas menos del total, el saldo queda a crédito (requiere cliente).</p><button class="b big" style="width:100%" ${cart.length?'':'disabled'} onclick="cobrar()">Cobrar</button>${mesa?'<button class="b g" style="width:100%;margin-top:8px" onclick="go2(\'mesas\')">📋 Volver a mesas</button>':''}</div></div>`}
+const go2=t=>{tab=t;cart=[];mesa='';note=null;render()};
+function cobrar(){if(busy||!cart.length)return;busy=true;const b=B();
+ try{for(const i of cart){const p=b.products.find(x=>x.id===i.pid);if(stock(p)<i.qty){say('Stock insuficiente: '+p.name,1);return}}
+ const c=calc3(),total=c.total,pv=V('pa'),paid=pv===''?total:Math.min(total,Math.max(0,+pv)),credit=total-paid,cu=V('cu');
+ if(credit>0&&!cu){say('Para vender a crédito selecciona un cliente.',1);return}
+ const n=b.sales.length+1,me=V('me'),at=now(),s={id:uid(),n,at,items:cart.map(i=>({...i})),sub:Math.round(c.base),gross:c.g,taxes:c.tx,total,method:me,paid,credit,cust:cu,mesa,void:false,by:who,log:[]};
+ b.sales.push(s);cart.forEach(i=>b.moves.push({id:uid(),pid:i.pid,qty:-i.qty,type:'Venta',ref:'#'+n,at}));
+ if(credit>0)b.debts.push({id:uid(),cust:cu,sale:n,bal:credit,total:credit,pays:[]});
+ if(me==='Efectivo'&&b.open&&paid>0)b.open.mv.push({t:'Venta #'+n,amt:paid});
+ if(mesa){delete OR(b)[mesa];delete PD(b)[mesa]}
+ cart=[];tk=s;ask=s;mesa='';save();say('Venta #'+n+' cobrada por '+fmt(total))}
+ finally{busy=false;render()}}
+const _t3=ticket;ticket=(s,cp,re)=>{if(s.gross===undefined)return _t3(s,cp,re);const c=S.cfg,t=_t3(c.showTax?s:{...s,sub:s.gross,taxes:s.taxes.filter(x=>x.add)},cp,re);return t.replace('Comprobante interno',(c.nit?'NIT '+esc(c.nit)+'<br>':'')+(c.dir?esc(c.dir)+'<br>':'')+(c.tel?'Tel. '+esc(c.tel)+'<br>':'')+'Comprobante interno').replace(/¡?Gracias por su visita!?/,esc(c.foot||'¡Gracias por su visita!'))};
+const _tax=tax;tax=()=>{const h=_tax(),i=h.indexOf('<p class="k">'),j=h.indexOf('</p>',i);return i<0?h:h.slice(0,i)+'<p class="k">Los impuestos <b>en factura</b> (IVA, impoconsumo) van <b>incluidos en el precio</b> de cada producto y no se muestran al consumidor: base = precio ÷ (1 + tarifa). Los conceptos cuyo nombre incluya “propina” se cobran aparte y son voluntarios. Las obligaciones <b>del período</b> se calculan sobre ventas netas. Confirma tarifas y tratamiento con tu contador (norma fiscal colombiana).</p>'+h.slice(j+4)};
+
+async function setup(){const a=V('s1');if(a.length<4){say('El PIN debe tener mínimo 4 dígitos.',1);return render()}S.sec={o:await hx(a)};save();say('PIN del dueño creado. Ingresa.');render()}
+async function login(){if(Date.now()<lk){say('Demasiados intentos. Espera 30 segundos.',1);return render()}const h=await hx(V('lp')),st=ST().find(x=>x.pin===h);
+ if(h===S.sec.o){role='owner';who='Dueño'}else if(st){role='mesero';who=st.name}else{if(++fl>=5){lk=Date.now()+30000;fl=0}say('PIN incorrecto.',1);return render()}fl=0;tab=role==='owner'?'dash':'pos';cart=[];mesa='';render()}
+async function chg(){const a=V('n1');if(a.length<4){say('Mínimo 4 dígitos.',1);return render()}const h=await hx(a);if(ST().some(x=>x.pin===h)){say('Ese PIN ya lo usa un mesero.',1);return render()}S.sec.o=h;save();say('PIN del dueño actualizado.');render()}
+async function addStaff(){const n=V('sn').trim(),p=V('sp');if(!n||p.length<4){say('Escribe nombre y un PIN de mínimo 4 dígitos.',1);return render()}const h=await hx(p);if(h===S.sec.o||ST().some(x=>x.pin===h)){say('Ese PIN ya está en uso.',1);return render()}ST().push({id:uid(),name:n,pin:h});save();say('Mesero agregado.');render()}
+async function pinStaff(id){const p=V('p'+id);if(p.length<4){say('Mínimo 4 dígitos.',1);return render()}const h=await hx(p);if(h===S.sec.o||ST().some(x=>x.pin===h)){say('Ese PIN ya está en uso.',1);return render()}ST().find(x=>x.id===id).pin=h;save();say('PIN actualizado.');render()}
+function delStaff(id){S.staff=ST().filter(x=>x.id!==id);save();render()}
+function loginUI(){const c=S.cfg;if(!S.sec)return`<div class="card lg"><h2>🔐 Crea tu PIN de dueño</h2><p>Mínimo 4 dígitos. Después agregas a tus meseros con su propio PIN en Seguridad.</p><label>PIN del dueño<br><input id="s1" type="password" inputmode="numeric" autocomplete="new-password" style="width:100%"></label><br><br><button class="b big" style="width:100%" onclick="setup()">Guardar y continuar</button></div>`;
+ const bg=c.lbgImg?`background:url(${c.lbgImg}) center/cover`:c.lbg?`background:${c.lbg}`:'';
+ return`<div class="lgw" style="${bg}"><div class="card lg">${c.logo?`<img class="lgi" src="${c.logo}" alt="">`:''}<h2 style="text-align:center">${esc(c.lt||c.app)}</h2>${c.lm?`<p class="k" style="text-align:center">${esc(c.lm)}</p>`:''}<label>Ingresa tu PIN<br><input id="lp" type="password" inputmode="numeric" autocomplete="off" style="width:100%;font-size:1.4rem;text-align:center;letter-spacing:.3em" onkeydown="if(event.key==='Enter')login()"></label><br><br><button class="b big" style="width:100%" onclick="login()">Entrar</button></div></div>`}
+function sec(){const L=S.biz.flatMap(x=>S.d[x.id].sales.flatMap(s=>(s.log||[]).map(l=>({...l,n:s.n,bz:x.name})))).slice(-12).reverse();return`<h2>Seguridad y accesos</h2><div class="card"><h3 style="margin-top:0">PIN del dueño</h3><div class="row"><input id="n1" type="password" inputmode="numeric" placeholder="Nuevo PIN"><button class="b" onclick="chg()">Cambiar</button></div></div><h3>Meseros</h3><p class="k">Cada mesero entra solo con su PIN; el sistema ya sabe quién es. Puede ver el inventario, tomar pedidos y cobrar.</p><div class="row"><input id="sn" placeholder="Nombre"><input id="sp" type="password" inputmode="numeric" placeholder="PIN (mín. 4)"><button class="b" onclick="addStaff()">+ Agregar</button></div>${ST().map(x=>`<div class="card row"><b style="flex:1">${esc(x.name)}</b><input id="p${x.id}" type="password" inputmode="numeric" placeholder="Nuevo PIN" style="width:140px"><button class="b g" onclick="pinStaff('${x.id}')">Cambiar PIN</button><button class="b d" onclick="delStaff('${x.id}')">Quitar</button></div>`).join('')||'<p class="mut">Aún no hay meseros.</p>'}<h3>Registro de impresiones</h3><div class="tw"><table><tr><th>Fecha</th><th>Negocio</th><th>Venta</th><th>Tipo</th><th>Usuario</th></tr>${L.map(l=>`<tr><td>${l.at}</td><td>${esc(l.bz)}</td><td>#${l.n}</td><td class="${l.t==='Reimpresión'?'neg':''}">${l.t}</td><td>${esc(l.by)}</td></tr>`).join('')||'<tr><td colspan="5" class="mut">Sin impresiones.</td></tr>'}</table></div><p class="k">Los PIN se guardan cifrados en este navegador; protegen el uso diario pero no sustituyen un servidor.</p>`}
+
+function cfg(){const c=S.cfg,ci=(k,l,d)=>`<label class="fld">${l}<input type="color" value="${c[k]||d}" onchange="cf('${k}',this.value)"></label>`,ti=(k,l,ph)=>`<label class="fld">${l}<input value="${esc(c[k]||'')}" placeholder="${ph||''}" onchange="cf('${k}',this.value)"></label>`,up=(k,t)=>`<div class="row">${c[k]?`<img class="lgi" style="margin:0;max-height:60px" src="${c[k]}" alt="">`:'<span class="mut">Sin imagen</span>'}<label class="b g up">📷 ${t}<input type="file" accept="image/*" hidden onchange="logoSet('${k}',this.files[0])"></label>${c[k]?`<button class="b d" onclick="cf('${k}','')">Quitar</button>`:''}</div>`;
+ return`<h2>⚙️ Configuración</h2><div class="card"><h3 style="margin-top:0">🎨 Marca y apariencia</h3><div class="cc">${ti('app','Nombre de la app')}${ci('ac','Color principal','#0f766e')}${ci('bg','Color de fondo','#f6f7f9')}${ci('card','Color de tarjetas','#ffffff')}<label class="fld">Tema<select onchange="cf('theme',this.value)"><option value="auto" ${c.theme==='auto'?'selected':''}>Automático</option><option value="light" ${c.theme==='light'?'selected':''}>Claro</option><option value="dark" ${c.theme==='dark'?'selected':''}>Oscuro</option></select></label><label class="fld">Tamaño de letra<select onchange="cf('fs',this.value)">${[[16,'Normal'],[17,'Grande'],[19,'Más grande'],[21,'Extra grande']].map(([v,l])=>`<option value="${v}" ${c.fs===v?'selected':''}>${l}</option>`).join('')}</select></label></div><h3>Logotipo</h3>${up('logo','Subir logo')}<div class="row"><button class="b g" onclick="cfReset()">Restablecer colores y tamaño</button></div><p class="k">Si cambias fondo o tarjetas, usa colores acordes al tema (claros con tema claro, oscuros con oscuro) para que el texto se lea bien.</p></div>
+ <div class="card" style="margin-top:14px"><h3 style="margin-top:0">🔐 Pantalla de inicio de sesión</h3><div class="cc">${ti('lt','Título',c.app)}${ti('lm','Mensaje de bienvenida','Ej. Bienvenido, ingresa tu PIN')}${ci('lbg','Color de fondo','#0f766e')}</div><h3>Imagen de fondo</h3>${up('lbgImg','Subir imagen')}<div class="row"><button class="b g" onclick="cf('lbg','')">Quitar color de fondo</button></div></div>
+ <div class="card" style="margin-top:14px"><h3 style="margin-top:0">🧾 Datos de la factura</h3><div class="cc">${ti('nit','NIT')}${ti('dir','Dirección')}${ti('tel','Teléfono')}${ti('foot','Mensaje al pie','¡Gracias por su visita!')}</div><div class="row"><label><input type="checkbox" ${c.showTax?'checked':''} onchange="cf('showTax',this.checked)" style="width:auto;min-height:0"> Mostrar impuestos discriminados en la factura</label></div><p class="k">Por defecto el consumidor solo ve el total. Este comprobante es interno y no reemplaza la factura electrónica DIAN.</p></div>`}
+
+function toggleMenu(){const a=document.querySelector('aside'),b=document.getElementById('menuToggle'),open=!a.classList.contains('menu-open');a.classList.toggle('menu-open',open);if(b)b.setAttribute('aria-expanded',String(open))}
+function closeMenu(){const a=document.querySelector('aside'),b=document.getElementById('menuToggle');a.classList.remove('menu-open');if(b)b.setAttribute('aria-expanded','false')}
+function render(){const nv=document.getElementById('nav'),ap=document.querySelector('aside'),c=S.cfg;ap.style.display=role?'':'none';document.querySelector('.app').style.gridTemplateColumns=role?'':'1fr';
+ document.querySelector('.logo').innerHTML=(c.logo?`<img class="lgi" src="${c.logo}" alt="">`:'')+esc(c.app);
+ if(!role){const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';nv.innerHTML='';document.getElementById('m').innerHTML=n+loginUI();note=null;return}
+ const T=role==='owner'?TO:TM,ids=T.map(t=>t[0]);if(!ids.includes(tab))tab=ids[0];
+ nv.innerHTML=T.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="closeMenu();go2('${k}')">${l}</button>`).join('');
+ const bz=S.biz.find(x=>x.id===S.a),top=`<div class="top">${role==='owner'?`<select aria-label="Negocio activo" onchange="S.a=this.value;cart=[];mesa='';tk=null;save();render()">${S.biz.map(x=>`<option value="${x.id}" ${x.id===S.a?'selected':''}>${esc(x.name)} · ${esc(x.type)}</option>`).join('')}</select><button class="b g" onclick="go2('neg')">⚙ Negocios</button>`:`<b style="font-size:1.15rem">🏪 ${esc(bz.name)}</b>`}<span class="chipx" style="margin-left:auto">${role==='owner'?'👑 Dueño':'🍽️ '+esc(who)}</span><button class="b g" onclick="logout()">Salir</button></div>`;
+ const n=note?`<div class="msg ${note.e?'e':''}">${esc(note.t)}</div>`:'';
+ const tp=tk&&tab==='pos'?`<div class="card"><div class="row"><b>🧾 Factura #${tk.n}</b><select aria-label="Ancho de papel" onchange="pw=+this.value;render()"><option value="80" ${pw===80?'selected':''}>Térmica 80 mm</option><option value="58" ${pw===58?'selected':''}>Térmica 58 mm</option></select><button class="b" onclick="ask=tk;render()">🖨 ${(tk.log||[]).length?'Volver a imprimir':'Imprimir factura'}</button><button class="b g" onclick="tk=null;render()">Cerrar</button></div><div class="prev">${ticket(tk,0)}</div></div>`:'';
+ const md=ask?`<div class="ov"><div class="mo" role="dialog" aria-modal="true" aria-label="Confirmar impresión"><h3 style="margin-top:0">🖨️ ¿Imprimir factura?</h3><p>Venta #${ask.n} · <b>${fmt(ask.total)}</b><br>Se imprimirán el original y la copia de control interno.</p>${(ask.log||[]).length?'<p class="neg"><b>Es una reimpresión y quedará registrada.</b></p>':''}<div class="row"><button class="b big" onclick="printTk()">Sí, imprimir</button><button class="b g big" onclick="ask=null;render()">Ahora no</button></div></div></div>`:'';
+ const M={dash,pos,mesas,sales,inv,exp,cash,debt,tax,neg,rep,sec,cfg};
+ document.getElementById('m').innerHTML=top+n+tp+(role==='owner'?M[tab]():(tab==='inv'?invRO():tab==='mesas'?mesas():pos()))+md;note=null}
+/* ============================================================
+   CARGA INICIAL · CARTA DE BEBIDAS · NEGOCIO "Bar-Aura"
+   Fuente: carta_bebidas_precios.md (precios COP).
+   Se ejecuta una sola vez por estado (S.seeded.barAura).
+   Stock inicial 10, mínimo 3 y costo 0 (pendiente de conteo real).
+   ============================================================ */
+(function(){
+  if(S.seeded&&S.seeded.barAura)return;
+  const NAME='Bar-Aura',COST=0,MIN=3,STOCK=10;
+  const C='Cervezas',J='Jarras y cubetazos',M='Micheladas',K='Cócteles',
+        S0='Sin alcohol',H='Shots',L='Licores',V='Vinos',B='Bebidas';
+  const P=[
+    ['Club Colombia Dorada',5500,C],['Club Colombia Roja',5500,C],['Club Colombia Negra',5500,C],
+    ['Club Colombia Trigo',5500,C],['Club Colombia De temporada',5500,C],
+    ['Águila Original',4000,C],['Águila Light',4000,C],['Poker',4000,C],['Costeña',4500,C],
+    ["Redd's Con hielo",6000,C],["Redd's Limón",9000,C],["Redd's Naranja",9000,C],['Andina',4000,C],
+    ['Stella Artois',11000,C],['Corona',9000,C],['Corona Light',9000,C],['Coronita',6000,C],
+    ['Budweiser 330 ml',7000,C],['Sol',7000,C],['Miller Lite',5000,C],['Heineken 350 ml',7000,C],
+    ['BBC 330 Cajicá',11000,C],['BBC 330 Monserrate',11000,C],['BBC 330 Chapinero',11000,C],
+    ['BBC 330 Rosada',11000,C],['BBC 330 Lager',11000,C],['3 Cordilleras Rosada',11000,C],
+    ['3 Cordilleras Mulata',11000,C],['3 Cordilleras Negra',11000,C],['3 Cordilleras Blanca',11000,C],
+    ['3 Cordilleras Mestiza',11000,C],['Bruder',15000,C],
+    ['Dorada Jarra 1.500 cc',24000,J],['Dorada Pinta',10000,J],['Dorada Vaso',7000,J],
+    ['Dorada Jarra',19000,J],['Águila Jarra',17000,J],['Águila Light Jarra',17000,J],
+    ['Poker Jarra',15000,J],['Andina Jarra',14000,J],
+    ['Cubetazo Dorada x6',32000,J],['Cubetazo Águila x6',23000,J],['Cubetazo Águila Light x6',23000,J],
+    ['Cubetazo Poker x6',23000,J],['Cubetazo Costeña x6',25000,J],
+    ['Michelada Tajín, limón y sal',3000,M],['Michelada Cerezas',3000,M],['Michelada Maracuyá',6000,M],
+    ['Margarita',23000,K],['Cóctel Clásico',23000,K],['Cóctel Blueberry',23000,K],['Cóctel Devils',23000,K],
+    ['Cóctel Coco azul',23000,K],['Cóctel Tropical',23000,K],['Mojito Cubano',30000,K],
+    ['Mojito de fresa',20000,S0],['Mojito watermelon',20000,S0],['Tonic café',20000,S0],['Barbie',20000,S0],
+    ['Shot de autor Whiskey',20000,H],['Shot de autor Ron',20000,H],
+    ['Shot de autor Aguardiente',20000,H],['Shot de autor Tequila',20000,H],
+    ['Cabeza de jabalí',65000,L],
+    ['Aguardiente Azul Media',60000,L],['Aguardiente Azul Botella',105000,L],
+    ['Aguardiente Verde Media',55000,L],['Aguardiente Verde Botella',90000,L],
+    ['Onix Amarillo Media',65000,L],['Onix Amarillo Botella',110000,L],
+    ['Manzanares Media',65000,L],['Manzanares Botella',115000,L],
+    ['Antioqueño Real Media',65000,L],['Antioqueño Real Botella',115000,L],
+    ['Antioqueño Media',65000,L],['Antioqueño Botella',110000,L],
+    ['José Cuervo Botella',170000,L],
+    ['Ron Boyacá 3 años Media',60000,L],['Ron Boyacá 3 años Botella',105000,L],
+    ['Ron Bacardí Media',75000,L],['Ron Bacardí Botella',120000,L],
+    ["Buchanan's 12 años Media",200000,L],["Buchanan's 12 años Botella",300000,L],
+    ['Johnnie Walker Sello Negro Media',190000,L],['Johnnie Walker Sello Negro Botella',290000,L],
+    ['Johnnie Walker Sello Rojo Media',140000,L],['Johnnie Walker Sello Rojo Botella',210000,L],
+    ['Chivas Regal 12 años Botella',260000,L],['Old Parr 12 años Media',200000,L],
+    ['Old Parr 12 años Botella',300000,L],["Jack Daniel's Media",160000,L],
+    ["Jack Daniel's Botella",270000,L],['Something Special Media',125000,L],
+    ['Something Special Botella',190000,L],
+    ['Absolut Original Media',125000,L],['Absolut Original Botella',250000,L],
+    ['Absolut Sabores Media',130000,L],['Absolut Sabores Botella',190000,L],
+    ['Absolut Sabores Litro',240000,L],['Smirnoff Original Botella',195000,L],
+    ['Smirnoff Lulo Media',70000,L],['Smirnoff Lulo Botella',120000,L],['Tropkaya Botella',115000,L],
+    ['Undurraga Botella',170000,V],['Las Moras Botella',150000,V],['Gato Negro Botella',140000,V],
+    ['Casillero del Diablo Botella',150000,V],['Dubonnet Botella',150000,V],
+    ['Americano',3500,B],['Capuccino',7000,B],['Aromáticas',3000,B],['Soda',4000,B],
+    ['Soda con limón',5000,B],['Soda mojito',6000,B],['Agua en botella',3500,B],
+    ['Agua en botella pequeña',2000,B],['Gatorade',6000,B],['Electrolit',12000,B],
+    ['Red Bull',13000,B],['Gaseosa 350',4500,B],['De Todito grande',10000,B],
+    ['De Todito pequeño',5000,B],['Milo',8000,B]
+  ];
+  let biz=S.biz.find(x=>{const k=String(x.name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');return k==='baraura'||k==='aurabar';});
+  if(!biz){biz={id:uid(),name:NAME,type:'Gastronomía'};S.biz.push(biz);S.d[biz.id]=nb([]);}
+  const b=S.d[biz.id],have=new Set(b.products.map(p=>String(p.name||'').trim().toLowerCase()));
+  let add=0;
+  P.forEach(([name,price,cat])=>{
+    const key=name.trim().toLowerCase();
+    if(have.has(key))return;
+    const id=uid();
+    b.products.push({id,name,cat,price,cost:COST,min:MIN});
+    b.moves.push({id:uid(),pid:id,qty:STOCK,type:'Inventario inicial',ref:'Carta bebidas',at:now()});
+    have.add(key);add++;
+  });
+  S.seeded=Object.assign(S.seeded||{},{barAura:true});
+  if(add)S.a=biz.id;
+  save();
+})();
+applyCfg();render();
+if(!SERVER_STATE&&typeof google!=='undefined'&&google.script&&google.script.run){save();}
+</script></body></html>
